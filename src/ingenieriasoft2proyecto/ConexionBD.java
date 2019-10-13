@@ -38,7 +38,7 @@ public class ConexionBD {
     public ConexionBD(String user, String password, String ip) {
        this.user = user;
        this.pass = password;
-       db+= ip+ namebd;
+       db+= ip+ nameBD;
        
     }
     
@@ -72,7 +72,7 @@ public class ConexionBD {
         try {
             this.resultado=this.s.executeQuery(sql);
         } catch (SQLException ex) {
-            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConexionBD.class.getName()).log(Level.SEVERE, null, ex);
         }
         return resultado;
     }
