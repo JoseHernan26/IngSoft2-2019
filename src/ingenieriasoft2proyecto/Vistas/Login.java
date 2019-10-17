@@ -5,17 +5,20 @@
  */
 package ingenieriasoft2proyecto.Vistas;
 
-import ingenieriasoft2proyecto.ControllerLogin;
-
+import ingenieriasoft2proyecto.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Note250
  */
-public class Login extends javax.swing.JFrame {
+public class Login extends javax.swing.JFrame implements LoginMvp.View {
     /**
      * Creates new form Login
      */
+    private LoginMvp.Controller mController;
     public Login() {
+        mController = new ControllerLogin(this);
         initComponents();
         
     }
@@ -35,6 +38,8 @@ public class Login extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         usuarioLogin = new javax.swing.JTextField();
         passwordLogin = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         ingresarLogin = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -52,6 +57,9 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 0, 0));
+
         ingresarLogin.setText("Igresar");
         ingresarLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -59,26 +67,49 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ingresarLogin)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ingresarLogin)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(76, 76, 76)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(usuarioLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addGap(76, 76, 76)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(passwordLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(usuarioLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(passwordLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(81, 81, 81)
-                        .addComponent(ingresarLogin)))
-                .addContainerGap(97, Short.MAX_VALUE))
+                        .addGap(76, 76, 76)
+                        .addComponent(jLabel3))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(157, 157, 157)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {passwordLogin, usuarioLogin});
+
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -90,9 +121,11 @@ public class Login extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(passwordLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                .addComponent(ingresarLogin)
-                .addGap(35, 35, 35))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -110,11 +143,11 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void usuarioLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usuarioLoginActionPerformed
-        // TODO add your handling code here:
+       jLabel3.setVisible(false);
     }//GEN-LAST:event_usuarioLoginActionPerformed
 
     private void ingresarLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ingresarLoginActionPerformed
-        ControllerLogin.ValidaForm(usuarioLogin.getText(),passwordLogin.getText());
+        mController.start();
     }//GEN-LAST:event_ingresarLoginActionPerformed
 
     /**
@@ -156,8 +189,46 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JButton ingresarLogin;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField passwordLogin;
     private javax.swing.JTextField usuarioLogin;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void errorValidacion() {
+        passwordLogin.setText("");
+        usuarioLogin.setText("");
+        jLabel3.setVisible(true);
+        jLabel3.setText("El usuario o la contraseña son incorrectos");
+    }
+
+    @Override
+    public void errorConnect(){
+        passwordLogin.setText("");
+        usuarioLogin.setText("");
+        jLabel3.setVisible(true);
+        jLabel3.setText("Lo sentimos, hubo un error de conexion.");
+    }
+
+    @Override
+    public void iniciarSecion(){
+        String user = usuarioLogin.getText();
+        String pass = passwordLogin.getText();
+        if(mController.ValidaForm(user, pass)){
+            mController.start();
+        }
+    }
+
+    @Override
+    public void transferControl(int tipo){
+        Principal p = new Principal(tipo);
+        p.setVisible(true);
+        try {
+            this.finalize();
+        } catch (Throwable ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
