@@ -26,6 +26,10 @@ public class Producto {
         this.tipo = tipo;
     }
 
+    public Producto() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     public int getId() {
         return id;
     }
