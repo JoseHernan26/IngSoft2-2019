@@ -5,6 +5,10 @@
  */
 package ingenieriasoft2proyecto;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  *
  * @author Note250
@@ -16,5 +20,16 @@ public class FuncionesDeControl {
         }else{
             return true;
         }
+    }
+    private String dateFormat(Date date){
+        Locale locale = new Locale("us", "US");
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+        return dateFormat.format(date);
+    }
+    private Float redondeo2Deci(Float f){
+        return  Float.parseFloat(String.format(Locale.US,"%.2f",f));
+    }
+    private String redondeo2String(Float f){
+        return  String.format(Locale.US,"%.2f",f);
     }
 }

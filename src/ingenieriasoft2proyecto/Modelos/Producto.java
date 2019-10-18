@@ -5,25 +5,34 @@
  */
 package ingenieriasoft2proyecto.Modelos;
 
+import java.util.Date;
+
+
 /**
  *
  * @author Note250
  */
 public class Producto {
     private int id;
+    private int idProveedor;
     private int cantidad;
     private float precio;
     private String nombre;
-    private int garantia;
-    private int tipo;
+    private Date garantia;
+    private String tipo;
 
-    public Producto(int id, int cantidad, float precio, String nombre, int garantia, int tipo) {
+    public Producto(int id, int idProveedor, int cantidad, float precio, String nombre, Date garantia, String tipo) {
         this.id = id;
+        this.idProveedor = idProveedor;
         this.cantidad = cantidad;
         this.precio = precio;
         this.nombre = nombre;
         this.garantia = garantia;
         this.tipo = tipo;
+    }
+
+    public Producto() {
+    
     }
 
     public int getId() {
@@ -38,28 +47,25 @@ public class Producto {
         return cantidad;
     }
 
+    public int getIdProveedor() {
+        return idProveedor;
+    }
+
+    public void setIdProveedor(int idProveedor) {
+        this.idProveedor = idProveedor;
+    }
+
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
 
-    public int getTipo() {
+    public String getTipo() {
         return tipo;
     }
 
-    public void setTipo(int tipo) {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
-    
-    
-    
-    public int getStock() {
-        return cantidad;
-    }
-
-    public void setStock(int stock) {
-        this.cantidad = stock;
-    }
-
     public float getPrecio() {
         return precio;
     }
@@ -76,11 +82,11 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public int getGarantia() {
+    public Date getGarantia() {
         return garantia;
     }
 
-    public void setGarantia(int garantia) {
+    public void setGarantia(Date garantia) {
         this.garantia = garantia;
     }
     
