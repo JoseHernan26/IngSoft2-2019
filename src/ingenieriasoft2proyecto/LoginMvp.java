@@ -10,15 +10,25 @@ package ingenieriasoft2proyecto;
  * @author demig
  */
 public interface LoginMvp {
+    interface Dao{
+        public void start(String user, String pass);
+    }
     interface Controller{
-        public  boolean ValidaForm(String user,String pass);
-        public void start();
+        public  void validaForm(String user,String pass);
+        /**
+         * result = 0 error de conexion
+         * result = 1 error al encontrar
+         * result = 2 todo correcto
+         * @param result 
+         */
+        public void processResult(int result);
     }
     interface View{
         public void errorValidacion();
         public void errorConnect();
-        public void iniciarSecion();
-        public void transferControl(int tipo);
+        public void iniciarSesion();
+        public void finish();
+        public void errorText(int text);
     }
     
 }

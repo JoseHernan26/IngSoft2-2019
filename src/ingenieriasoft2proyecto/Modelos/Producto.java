@@ -12,19 +12,23 @@ import java.util.Date;
  *
  * @author Note250
  */
+enum tipoProd{
+    INSUMO,
+    REPUESTO,
+}
 public class Producto {
     private int id;
     private int idProveedor;
-    private int cantidad;
+    private int stock;
     private float precio;
     private String nombre;
-    private Date garantia;
-    private String tipo;
+    private int garantia;
+    private tipoProd tipo;
 
-    public Producto(int id, int idProveedor, int cantidad, float precio, String nombre, Date garantia, String tipo) {
+    public Producto(int id, int idProveedor, int stock, float precio, String nombre, int garantia, tipoProd tipo) {
         this.id = id;
         this.idProveedor = idProveedor;
-        this.cantidad = cantidad;
+        this.stock = stock;
         this.precio = precio;
         this.nombre = nombre;
         this.garantia = garantia;
@@ -43,8 +47,8 @@ public class Producto {
         this.id = id;
     }
 
-    public int getCantidad() {
-        return cantidad;
+    public int getStock() {
+        return stock;
     }
 
     public int getIdProveedor() {
@@ -55,16 +59,16 @@ public class Producto {
         this.idProveedor = idProveedor;
     }
 
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
-    public String getTipo() {
+    public tipoProd getTipo() {
         return tipo;
     }
 
     public void setTipo(String tipo) {
-        this.tipo = tipo;
+        this.tipo = tipoProd.valueOf(tipo);
     }
     public float getPrecio() {
         return precio;
@@ -82,11 +86,11 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public Date getGarantia() {
+    public int getGarantia() {
         return garantia;
     }
 
-    public void setGarantia(Date garantia) {
+    public void setGarantia(int garantia) {
         this.garantia = garantia;
     }
     

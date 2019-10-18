@@ -6,13 +6,18 @@
 package ingenieriasoft2proyecto.Vistas;
 
 import ingenieriasoft2proyecto.*;
+import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
 /**
  *
  * @author Note250
  */
 public class Login extends javax.swing.JFrame implements LoginMvp.View {
+    private Border rojo = BorderFactory.createLineBorder(Color.RED, 1);
+    private Border negro = BorderFactory.createLineBorder(Color.BLACK, 1);
     /**
      * Creates new form Login
      */
@@ -51,9 +56,15 @@ public class Login extends javax.swing.JFrame implements LoginMvp.View {
 
         jLabel2.setText("Usuario:");
 
-        usuarioLogin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                usuarioLoginActionPerformed(evt);
+        usuarioLogin.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                usuarioLoginFocusGained(evt);
+            }
+        });
+
+        passwordLogin.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                passwordLoginFocusGained(evt);
             }
         });
 
@@ -142,13 +153,19 @@ public class Login extends javax.swing.JFrame implements LoginMvp.View {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void usuarioLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usuarioLoginActionPerformed
-       jLabel3.setVisible(false);
-    }//GEN-LAST:event_usuarioLoginActionPerformed
-
     private void ingresarLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ingresarLoginActionPerformed
-        mController.start();
+        iniciarSesion();
     }//GEN-LAST:event_ingresarLoginActionPerformed
+
+    private void usuarioLoginFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_usuarioLoginFocusGained
+        jLabel3.setVisible(false);
+        usuarioLogin.setBorder(negro);
+    }//GEN-LAST:event_usuarioLoginFocusGained
+
+    private void passwordLoginFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passwordLoginFocusGained
+        jLabel3.setVisible(false);
+        passwordLogin.setBorder(negro);
+    }//GEN-LAST:event_passwordLoginFocusGained
 
     /**
      * @param args the command line arguments
@@ -213,22 +230,28 @@ public class Login extends javax.swing.JFrame implements LoginMvp.View {
     }
 
     @Override
-    public void iniciarSecion(){
+    public void iniciarSesion(){
         String user = usuarioLogin.getText();
         String pass = passwordLogin.getText();
-        if(mController.ValidaForm(user, pass)){
-            mController.start();
-        }
+        mController.validaForm(user, pass);
     }
 
     @Override
-    public void transferControl(int tipo){
-        Principal p = new Principal(tipo);
-        p.setVisible(true);
+    public void finish(){
         try {
             this.finalize();
         } catch (Throwable ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void errorText(int text) {
+        
+        if(text == 0){
+            usuarioLogin.setBorder(rojo);
+        }else{
+            passwordLogin.setBorder(rojo);
         }
     }
 }

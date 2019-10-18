@@ -5,39 +5,66 @@
  */
 package ingenieriasoft2proyecto.Vistas;
 
+import ingenieriasoft2proyecto.Modelos.Producto;
+import ingenieriasoft2proyecto.Modelos.Tarea;
 import ingenieriasoft2proyecto.TareasMvp;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author demig
  */
 public class TareasView implements TareasMvp.View {
+    private TareasMvp.Controller mController;
+    private Tarea tarea;
+    private List<Producto> repuestosTarea;
+    public TareasView(TareasMvp.Controller mController) {
+        this.mController = mController;
+        this.tarea = new Tarea();
+        this.repuestosTarea = new ArrayList();
+    }
     
     @Override
-    public void mostrarTablaRepuestos(String buscador) {
-    
-        
+    public void mostrarTablaRepuestos(List repuestos) {
+       //cargar tabla frontend
     }
-
+    
+    @Override
+    public void mostrarPredefinidas(List<Tarea> tareas) {
+        //cargar lista desplegable frontend
+    }
+    
     @Override
     public void mostrarExito() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        JOptionPane.showMessageDialog(null, "La tarea se agrego con exito.", "EXITO",JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
-    public void mostrarError() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void mostrarError(String text) {
+        JOptionPane.showMessageDialog(null, text, "ERROR",JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void preEnvioDatos() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        tarea.setNombre("");
+        tarea.setGarantia(0);
+        tarea.setDescripcion("");
+        tarea.setSubTotal(0f);
+        tarea.setInsumos(repuestosTarea);
+        tarea.setSubTotal(0);
+        tarea.setValorServicio(0);
+        //if(checkbutton.ischecked() && no era predefinida) //algo asi quedaria la condicion
+        mController.agregarTarea(tarea, true);
+        //else
+        mController.agregarTarea(tarea, false);
     }
 
     @Override
     public void preBusqueda() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       //Obtener jtextfield. implementar el listener adecuado.
+       mController.buscarProductos("");
     }
-    
-    
 }

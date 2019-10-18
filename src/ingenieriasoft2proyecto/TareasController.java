@@ -18,39 +18,33 @@ import java.util.List;
  * @author demig
  */
 public class TareasController implements TareasMvp.Controller {
-    private ConexionBD conect = null;
     private TareasMvp.View mView;
+    private TareasMvp.Dao mDao;
+    private List<Producto> repuestos;
+    private List<Tarea> predefinidas;
     public TareasController(TareasMvp.View mView) {
-        conect = new ConexionBD();
         this.mView = mView;
+        this.mDao = new TareasDao(this);
+        this.repuestos = mDao.getAll();
+        this.predefinidas = mDao.getPredefs();
     }
     @Override
-    public List<Producto> buscarProductos(String buscador) {
-            String SQL;
-        if(buscador.equals("")){
-            SQL = "SELECT * FROM Producto WHERE tipo = 'Repuesto' ";
-        }else{
-            SQL = "SELECT * FROM Producto WHERE tipo = 'Repuesto' AND nombre = '"+buscador+"'";
-        }
-        ResultSet rs = conect.EjecutarConsultaSQL(SQL);
-        List<Producto> list = new ArrayList<>();
-        try{
-            Producto p;
-            while(rs.next()){
-                p = new Producto();
-                p.setId(rs.getInt("idProducto"));
-                p.setNombre(rs.getString("nombre"));
-                p.setCantidad(rs.getInt("stock"));
-                p.setGarantia(rs.getDate("garantia"));
-                p.setIdProveedor(rs.getInt("idProveedor"));
-                p.setPrecio(rs.getFloat("precio"));
-                p.setTipo(rs.getString("tipo"));
-                list.add(p);
+    public void buscarProductos(String buscador) {
+        if(Funciones.controlText(buscador)){
+            List<Object> filas = new ArrayList<>();
+            Object[] row = new Object[4];
+            for(Producto p : repuestos){
+                if(Funciones.compareStrings(p.getNombre(), buscador)){
+                    row[0] = p.getId();
+                    row[1] = p.getNombre();
+                    row[2] = p.getStock();
+                    row[3] = p.getPrecio();
+                    filas.add(row);
+                }
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+            mView.mostrarTablaRepuestos(filas);
         }
-        return list; 
+        
     }
 
     @Override
@@ -60,7 +54,22 @@ public class TareasController implements TareasMvp.Controller {
 
     @Override
     public void agregarTarea(Tarea tarea, boolean isPredef) {
-        
+        int respuesta = mDao.insertar(tarea);
+        if(respuesta == 1){
+            if(isPredef){
+                respuesta = mDao.insertarPredef(tarea);
+                if(respuesta == 1){
+                    mView.mostrarExito();
+                }else{
+                    mView.mostrarError("Error al insertar la tarea como predefinida");
+                }
+            }else{
+                mView.mostrarExito();
+            }
+        }else{
+            mView.mostrarError("Error al insertar la tarea");
+            return;
+        }
     }
     
 }

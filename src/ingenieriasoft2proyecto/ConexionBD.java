@@ -107,20 +107,29 @@ public class ConexionBD {
             this.resultado=this.s.executeQuery(sql);
         } catch (SQLException ex) {
             Logger.getLogger(ConexionBD.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return resultado;
     }
-    
+    /**
+     * 0 ni se ejecuto el codigo
+     * 1 todo OK
+     * 2 error al agregar
+     * 3 Exepcion
+     * @param sql
+     * @return 
+     */
     public int EjecutarOperacion(String sql){
         int respuesta = 0;
         try {           
             respuesta = this.s.executeUpdate(sql);
                 if(respuesta==1){
                     System.out.println("Registro Guardado");
+                    return respuesta;
                 }
                 else{
                     System.out.println("Ocurrio un problema al agregar el registro");
-
+                    return 2;
                 }
             } catch(SQLException ex){
                 // Mostramos toda la informacion sobre el error disponible
@@ -133,6 +142,7 @@ public class ConexionBD {
                 }
             } catch(Exception e) {
                 System.out.println("Se produjo un error inesperado:    "+e.getMessage());
+                return 3;
             }
         return respuesta;
       }

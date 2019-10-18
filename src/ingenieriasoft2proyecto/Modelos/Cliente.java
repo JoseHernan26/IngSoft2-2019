@@ -14,14 +14,12 @@ public class Cliente {
     private String nombre;
     private int telefono;
     private char correo;
-    private char tipo;
 
-    public Cliente(int id, String nombre, int telefono, char correo, char tipo) {
+    public Cliente(int id, String nombre, int telefono, char correo) {
         this.id = id;
         this.nombre = nombre;
         this.telefono = telefono;
         this.correo = correo;
-        this.tipo = tipo;
     }
 
     public int getId() {
@@ -54,14 +52,6 @@ public class Cliente {
 
     public void setCorreo(char correo) {
         this.correo = correo;
-    }
-
-    public char getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(char tipo) {
-        this.tipo = tipo;
     }
 
   
