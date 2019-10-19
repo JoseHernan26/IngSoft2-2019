@@ -7,14 +7,8 @@ package ingenieriasoft2proyecto;
 
 /**
  *
- * @author Note250
+ * @author aleja
  */
-public class FuncionesDeControl {
-    private boolean controlText(String text){
-        if(text.length() == 0 || text.equals(" ")){
-            return false;
-        }else{
-            return true;
-        }
-    }
+public class gat {
+    
 }

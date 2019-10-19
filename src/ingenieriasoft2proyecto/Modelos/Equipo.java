@@ -6,22 +6,28 @@
 package ingenieriasoft2proyecto.Modelos;
 
 import ingenieriasoft2proyecto.Fecha;
+import java.util.Date;
 
 /**
  *
  * @author Note250
  */
-public class Telefono {
+enum estadoEquipo{
+    ENTREGADO,
+    PENDIENTE,
+    REPARANDO,
+}
+public class Equipo {
     private int id;
     private int idCliente;
     private String detallesIngreso;
     private String motivoFalla;
-    private Fecha fechaRecepcion;
-    private String estado; //ENTREGADO, PENDIENTE O PROCESADO   y en GARANTIA
-    private Fecha modelo;
-    private Fecha marca;
+    private Date fechaRecepcion;
+    private estadoEquipo estado;
+    private String modelo;
+    private String marca;
 
-    public Telefono(int id, int idCliente, String detallesIngreso, String motivoFalla, Fecha fechaRecepcion, String estado, Fecha modelo, Fecha marca) {
+    public Equipo(int id, int idCliente, String detallesIngreso, String motivoFalla, Date fechaRecepcion, estadoEquipo estado, String modelo, String marca) {
         this.id = id;
         this.idCliente = idCliente;
         this.detallesIngreso = detallesIngreso;
@@ -64,35 +70,35 @@ public class Telefono {
         this.motivoFalla = motivoFalla;
     }
 
-    public Fecha getFechaRecepcion() {
+    public Date getFechaRecepcion() {
         return fechaRecepcion;
     }
 
-    public void setFechaRecepcion(Fecha fechaRecepcion) {
+    public void setFechaRecepcion(Date fechaRecepcion) {
         this.fechaRecepcion = fechaRecepcion;
     }
 
-    public String getEstado() {
+    public estadoEquipo getEstado() {
         return estado;
     }
 
     public void setEstado(String estado) {
-        this.estado = estado;
+        this.estado = estadoEquipo.valueOf(estado);
     }
 
-    public Fecha getModelo() {
+    public String getModelo() {
         return modelo;
     }
 
-    public void setModelo(Fecha modelo) {
+    public void setModelo(String modelo) {
         this.modelo = modelo;
     }
 
-    public Fecha getMarca() {
+    public String getMarca() {
         return marca;
     }
 
-    public void setMarca(Fecha marca) {
+    public void setMarca(String marca) {
         this.marca = marca;
     }
 

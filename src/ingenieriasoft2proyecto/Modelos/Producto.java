@@ -5,21 +5,30 @@
  */
 package ingenieriasoft2proyecto.Modelos;
 
+import java.util.Date;
+
+
 /**
  *
  * @author Note250
  */
+enum tipoProd{
+    INSUMO,
+    REPUESTO,
+}
 public class Producto {
     private int id;
-    private int cantidad;
+    private int idProveedor;
+    private int stock;
     private float precio;
     private String nombre;
     private int garantia;
-    private int tipo;
+    private tipoProd tipo;
 
-    public Producto(int id, int cantidad, float precio, String nombre, int garantia, int tipo) {
+    public Producto(int id, int idProveedor, int stock, float precio, String nombre, int garantia, tipoProd tipo) {
         this.id = id;
-        this.cantidad = cantidad;
+        this.idProveedor = idProveedor;
+        this.stock = stock;
         this.precio = precio;
         this.nombre = nombre;
         this.garantia = garantia;
@@ -27,7 +36,6 @@ public class Producto {
     }
 
     public Producto() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public int getId() {
@@ -38,32 +46,29 @@ public class Producto {
         this.id = id;
     }
 
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public int getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
-    }
-    
-    
-    
     public int getStock() {
-        return cantidad;
+        return stock;
+    }
+
+    public int getIdProveedor() {
+        return idProveedor;
+    }
+
+    public void setIdProveedor(int idProveedor) {
+        this.idProveedor = idProveedor;
     }
 
     public void setStock(int stock) {
-        this.cantidad = stock;
+        this.stock = stock;
     }
 
+    public tipoProd getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipoProd.valueOf(tipo);
+    }
     public float getPrecio() {
         return precio;
     }

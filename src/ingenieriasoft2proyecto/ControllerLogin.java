@@ -5,16 +5,59 @@
  */
 package ingenieriasoft2proyecto;
 
+import ingenieriasoft2proyecto.Modelos.User;
+import ingenieriasoft2proyecto.Vistas.Principal;
+
 /**
  *
  * @author Note250
  */
-public class ControllerLogin {
-    
-    public static boolean ValidaForm(String user,String pass){
-        
-        
-        return true;
-        
+public class ControllerLogin implements LoginMvp.Controller {
+    private LoginMvp.View mView;
+    private LoginMvp.Dao mDao;
+    public ControllerLogin(LoginMvp.View mView){
+        this.mView = mView;
+        this.mDao = new DaoLogin(this);
     }
+    @Override
+    public void validaForm(String user,String pass){
+        if(Funciones.controlText(user)){
+            mView.errorText(0);
+            return;
+        }
+        if(Funciones.controlText(pass)){
+            mView.errorText(1);
+            return;
+        }
+        mDao.start(user, pass);
+    }
+
+    @Override
+    public void processResult(int result) {
+        switch(result){
+            case 0:{
+                mView.errorConnect();
+                break;
+            }
+            case 1:{
+                Principal p;
+                if(User.getInstance().getTipoEmpleado().equals("Administracion")){
+                    p = new Principal(1);
+                }else if(User.getInstance().getTipoEmpleado().equals("Tecnico")){
+                    p = new Principal(2);
+                }else{
+                    p = new Principal(3);
+                }
+                p.setVisible(true);
+                mView.finish();
+                break;
+            }
+            case 2:{
+                mView.errorValidacion(); 
+                break;
+            }
+        }
+    }
+
+    
 }

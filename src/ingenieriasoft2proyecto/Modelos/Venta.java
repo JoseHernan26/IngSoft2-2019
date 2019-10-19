@@ -14,12 +14,33 @@ import java.util.List;
  */
 public class Venta {
     private int id;
+    private int idEmpleado;
+    private int idCliente;
     private Date fecha;
     private List<detalleVenta> detalles;
     private float total;
 
-    public Venta(int id, Date fecha, List<detalleVenta> detalles, float total) {
+    public int getIdEmpleado() {
+        return idEmpleado;
+    }
+
+    public void setIdEmpleado(int idEmpleado) {
+        this.idEmpleado = idEmpleado;
+    }
+
+    public int getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(int idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    
+    public Venta(int id, int idEmpleado, int idCliente, Date fecha, List<detalleVenta> detalles, float total) {
         this.id = id;
+        this.idEmpleado = idEmpleado;
+        this.idCliente = idCliente;
         this.fecha = fecha;
         this.detalles = detalles;
         this.total = total;
