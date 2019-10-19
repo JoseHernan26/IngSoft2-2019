@@ -11,6 +11,11 @@ import java.util.Date;
  *
  * @author Note250
  */
+enum tipoE{
+        TECNICO,
+        ADMINISTRADOR,
+        EMPLEADO
+    };
 public class Empleado {
     private int id;
     private String nombre;
@@ -19,14 +24,14 @@ public class Empleado {
     private int telefono;
     private String correo;
     private Date fechaIngreso;
-    private int tipo; 
+    private tipoE tipo;
     /*
         1- Admin
         2- Atencion al publico
         3- Tecnico
     */
 
-    public Empleado(int id, String nombre, int documento, String direccion, int telefono, String correo, Date fechaIngreso, int tipo) {
+    public Empleado(int id, String nombre, int documento, String direccion, int telefono, String correo, Date fechaIngreso, tipoE tipo) {
         this.id = id;
         this.nombre = nombre;
         this.documento = documento;
@@ -93,13 +98,14 @@ public class Empleado {
         this.fechaIngreso = fechaIngreso;
     }
 
-    public int getTipo() {
+    public tipoE getTipo() {
         return tipo;
     }
 
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
+    public void setTipo(String tipo) {
+        this.tipo = tipoE.valueOf(tipo);
     }
+
     
     
 }

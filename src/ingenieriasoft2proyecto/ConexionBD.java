@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
  */
 public class ConexionBD {
     private static final String drv = "com.mysql.jdbc.Driver";
-    private static String db = "jdbc:mysql://";  
+    private static String db = "jdbc:mysql://127.0.0.1";  
     
     //private static final String db = "jdbc:mysql:/"server":"port"/"nameBD"";
     
@@ -27,35 +27,69 @@ public class ConexionBD {
     public String user = "";
     public String pass = ""; 
     */
-    public final String nameBD = "/name";
-    public String user;
-    public String pass; 
+    public final String nameBD = "/serviciotecnico";
+    public String user = "root";
+    public String pass = ""; 
 
     public java.sql.Statement s;
     public java.sql.ResultSet resultado;
     public Connection conexion = null;
 
-    public ConexionBD(String user, String password, String ip) {
-       this.user = user;
-       this.pass = password;
-       db+= ip+ namebd;
+    public ConexionBD() {
+       db+= nameBD;
        
     }
     
-    
+    public void transaccionCommit(String accion){
+        try{
+            switch(accion){
+                case "commit":{
+                    conexion.commit();
+                    break;
+                }
+                case "quitarAutoCommit":{
+                    conexion.setAutoCommit(false);
+                    break;
+                }
+                case "activarCommit":{
+                    conexion.setAutoCommit(true);
+                    break;
+                }
+                case "rollBack":{
+                    conexion.rollback();
+                    break;
+                }
+            }
+        }catch(SQLException e){
+            while(e != null){
+                System.out.println("SQLState "+e.getSQLState());
+                System.out.println("MENSAJE "+e.getMessage());
+                System.out.println("Error code "+e.getErrorCode());
+                e = e.getNextException();
+            }
+            
+        }
+    }
         
-    public void Conectar() throws SQLException, ClassNotFoundException{
+    public String Conectar(){
         try{
             if (conexion != null)
-               return;
+               return "OK";
             Class.forName(drv);
             conexion = DriverManager.getConnection(db,user,pass);
-            if (conexion !=null)
+            if (conexion !=null){
                 System.out.println("Conexión a base de datos: Ok"+db);
+                s = conexion.createStatement();
+            }
         }catch (SQLException e) {
             System.out.println("Problema al establecer la Conexión a la base de datos");
+            return "ERROR";
+        }catch (ClassNotFoundException ex){
+            ex.printStackTrace();
+            System.out.println("Error de clase");
+            return "ERROR";
         } 
-        s = conexion.createStatement();
+        return "OK";
     }
     
     public void Desconectar(){
@@ -72,21 +106,30 @@ public class ConexionBD {
         try {
             this.resultado=this.s.executeQuery(sql);
         } catch (SQLException ex) {
-            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConexionBD.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return resultado;
     }
-    
+    /**
+     * 0 ni se ejecuto el codigo
+     * 1 todo OK
+     * 2 error al agregar
+     * 3 Exepcion
+     * @param sql
+     * @return 
+     */
     public int EjecutarOperacion(String sql){
         int respuesta = 0;
         try {           
             respuesta = this.s.executeUpdate(sql);
                 if(respuesta==1){
                     System.out.println("Registro Guardado");
+                    return respuesta;
                 }
                 else{
                     System.out.println("Ocurrio un problema al agregar el registro");
-
+                    return 2;
                 }
             } catch(SQLException ex){
                 // Mostramos toda la informacion sobre el error disponible
@@ -99,6 +142,7 @@ public class ConexionBD {
                 }
             } catch(Exception e) {
                 System.out.println("Se produjo un error inesperado:    "+e.getMessage());
+                return 3;
             }
         return respuesta;
       }

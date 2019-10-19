@@ -13,15 +13,35 @@ import java.util.Date;
  */
 public class Reparacion {
     private int id;
+    private Equipo equipo;
+    private int idEmpleado;
     private Date fechaFin;
     private int total;
     private String observacion;
 
-    public Reparacion(int id, Date fechaFin, int total, String observacion) {
+    public Reparacion(int id, Equipo equipo, int idEmpleado, Date fechaFin, int total, String observacion) {
         this.id = id;
+        this.equipo = equipo;
+        this.idEmpleado = idEmpleado;
         this.fechaFin = fechaFin;
         this.total = total;
         this.observacion = observacion;
+    }
+    
+    public Equipo getEquipo() {
+        return equipo;
+    }
+
+    public void setEquipo(Equipo equipo) {
+        this.equipo = equipo;
+    }
+
+    public int getIdEmpleado() {
+        return idEmpleado;
+    }
+
+    public void setIdEmpleado(int idEmpleado) {
+        this.idEmpleado = idEmpleado;
     }
 
     public int getId() {
