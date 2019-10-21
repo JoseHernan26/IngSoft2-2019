@@ -5,24 +5,46 @@
  */
 package ingenieriasoft2proyecto.Vistas;
 
+import ingenieriasoft2proyecto.Funciones;
 import ingenieriasoft2proyecto.GestionarReparacionesController;
+import ingenieriasoft2proyecto.GestionarReparacionesMVP;
+import ingenieriasoft2proyecto.Modelos.Equipo;
 import ingenieriasoft2proyecto.Modelos.Presupuesto;
+import ingenieriasoft2proyecto.Modelos.Reparacion;
+import ingenieriasoft2proyecto.Modelos.Tarea;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Note250
  */
-public class Principal extends javax.swing.JFrame {
+public class Principal extends javax.swing.JFrame implements GestionarReparacionesMVP.View {
     public DefaultTableModel modeloTablaSeleccionarPresupuestos;
+    private GestionarReparacionesMVP.Controller mController;
+    private List<Tarea> listTareas;
+    private List<Equipo> equipos;
+    private Presupuesto presupuesto;
+    private Equipo equipo;
     /**
      * Creates new form Principal
      */
     public Principal(int tipo) {
+        mController = new GestionarReparacionesController(this);
+        //mController.mostarPresupuestos();
+        equipos =mController.obtenerEquipos();
+        DefaultTableModel model = (DefaultTableModel) jTableGestRepListadoTareasSeleccionadas.getModel();
+        model.setRowCount(0);
+        for(Equipo e : equipos){
+            Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
+            model.addRow(nuevoEquipo);
+        }
+        
         initComponents();
         //capturo los modelos de la pestaña gestionar reparaciones
         modeloTablaSeleccionarPresupuestos= (DefaultTableModel) jTableGestRepEquiposParaReparar.getModel();
+        
     }
 
     /**
@@ -69,7 +91,7 @@ public class Principal extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Modelo", "Marca", "Fecha Ingreso", "Estado", "IdPresupuesto"
+                "Modelo", "Marca", "Fecha Ingreso", "Estado", "Id"
             }
         ) {
             Class[] types = new Class [] {
@@ -137,14 +159,14 @@ public class Principal extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Tarea", "Detalle", "Estado", "Repuesto "
+                "Nombre", "garantia", "Detalle"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -156,6 +178,11 @@ public class Principal extends javax.swing.JFrame {
             }
         });
         jScrollPane3.setViewportView(jTableGestRepListadoTareasSeleccionadas);
+        if (jTableGestRepListadoTareasSeleccionadas.getColumnModel().getColumnCount() > 0) {
+            jTableGestRepListadoTareasSeleccionadas.getColumnModel().getColumn(0).setPreferredWidth(100);
+            jTableGestRepListadoTareasSeleccionadas.getColumnModel().getColumn(1).setPreferredWidth(100);
+            jTableGestRepListadoTareasSeleccionadas.getColumnModel().getColumn(2).setPreferredWidth(200);
+        }
 
         jTextF1GestionRepBuscarEquipos.setText("Ingrese el nombre del equipo a buscar");
         jTextF1GestionRepBuscarEquipos.addActionListener(new java.awt.event.ActionListener() {
@@ -317,35 +344,14 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButtonAltaTareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAltaTareaActionPerformed
         // TODO add your handling code here:
+        AltaTarea altTarea= new AltaTarea(this);
+        altTarea.setVisible(true);
+        this.setVisible(false);
+        
     }//GEN-LAST:event_jButtonAltaTareaActionPerformed
 
     private void jTextF1GestionRepBuscarEquiposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposActionPerformed
-        modeloTablaSeleccionarPresupuestos.setRowCount(0);
-        ArrayList<Presupuesto> presupuestos= new ArrayList<Presupuesto>();
-        GestionarReparacionesController crc = new GestionarReparacionesController();
-        presupuestos = crc.recuperarFilasPresupuestos();
         
-        String buscado;
-        buscado=jTextF1GestionRepBuscarEquipos.getText();
-        buscado = buscado.toUpperCase();
-        int i;
-        int fila =0;
-        for (Presupuesto p : presupuestos){
-            String buscando;
-            buscando = p.getIdEquipo().getModelo();
-            buscando=buscando.toUpperCase();
-            
-            if(buscando.contains(buscado)){
-                modeloTablaSeleccionarPresupuestos.addRow(new Object[4]);
-                jTableGestRepEquiposParaReparar.setValueAt(p.getIdEquipo().getModelo(),fila,0);
-                jTableGestRepEquiposParaReparar.setValueAt(p.getIdEquipo().getMarca(),fila,1);
-                jTableGestRepEquiposParaReparar.setValueAt(p.getIdEquipo().getFechaRecepcion(),fila,2);
-                jTableGestRepEquiposParaReparar.setValueAt(p.getIdEquipo().getEstado(),fila,3);
-                jTableGestRepEquiposParaReparar.setValueAt(p.getId(),fila,4);
-                fila++;
-            }
-            
-        }
         
     }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposActionPerformed
 
@@ -355,6 +361,29 @@ public class Principal extends javax.swing.JFrame {
 
     private void jTextF1GestionRepBuscarEquiposKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposKeyPressed
         // TODO add your handling code here:
+        modeloTablaSeleccionarPresupuestos.setRowCount(0);
+        
+        String buscado;
+        buscado=jTextF1GestionRepBuscarEquipos.getText();
+        buscado = buscado.toUpperCase();
+        int i;
+        int fila =0;
+        for (Equipo e : equipos){
+            String buscando;
+            buscando = e.getModelo();
+            buscando=buscando.toUpperCase();
+            
+            if(buscando.contains(buscado)){
+                modeloTablaSeleccionarPresupuestos.addRow(new Object[5]);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getModelo(),fila,0);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getMarca(),fila,1);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getFechaRecepcion(),fila,2);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getEstado(),fila,3);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getId(),fila,4);
+                fila++;
+            }
+            
+        }
     }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposKeyPressed
 
     private void jTableGestRepEquiposParaRepararMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaRepararMouseClicked
@@ -365,8 +394,10 @@ public class Principal extends javax.swing.JFrame {
         cargarTablaAnalisisResultado(codigoOrden);
         */
         //primero capturo el identificador del presupuesto en la tabla que fue clikeado
-        Integer idPresupuesto= Integer.parseInt(String.valueOf(modeloTablaSeleccionarPresupuestos.getValueAt(jTableGestRepEquiposParaReparar.getSelectedRow(),4)));
+        Integer id= Integer.parseInt(String.valueOf(modeloTablaSeleccionarPresupuestos.getValueAt(jTableGestRepEquiposParaReparar.getSelectedRow(),4)));
         //con el id debo hacer una consulta y cargar los campos, enviando el presupuesto al view
+        //this.mController.obtenerPresupuesto(idPresupuesto);
+        this.mController.obtenerReparacion(id);
     }//GEN-LAST:event_jTableGestRepEquiposParaRepararMouseClicked
 
     /**
@@ -432,4 +463,32 @@ public class Principal extends javax.swing.JFrame {
     public javax.swing.JTextField jTextFiEstadoEquipo;
     public javax.swing.JTextField jTextFiEstadoRecepcionEqui;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void mostrarTablaGestRepEquiposParaReparar(List presupuestos) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mostrarTablaGestRepListadoTareasSeleccionadas(Reparacion reparacion) {
+        
+    }
+
+    @Override
+    public void mostrarCamposReparacion(Reparacion reparacion) {
+        Equipo e = reparacion.getEquipo();
+        jTextFiEstadoEquipo.setText(String.valueOf(e.getEstado()));
+        jTextFMarca.setText(e.getMarca());
+        jTextFModelo.setText(e.getModelo());
+        jTextF2Falla.setText(e.getMotivoFalla());
+        jTextFiEstadoRecepcionEqui.setText(e.getDetallesIngreso());
+        jLabelFechaIngreso.setText(Funciones.dateFormat(e.getFechaRecepcion()));
+        DefaultTableModel model = (DefaultTableModel) jTableGestRepListadoTareasSeleccionadas.getModel();
+        model.setRowCount(0);
+        for(Tarea t : reparacion.getTareas()){
+            Object[] nuevaTarea = {t.getNombre(),String.valueOf(t.getGarantia()),t.getDescripcion()};
+            model.addRow(nuevaTarea);
+        }
+        
+    }
 }
