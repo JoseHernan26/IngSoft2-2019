@@ -10,6 +10,7 @@ import java.util.List;
 /**
  *
  * @author Note250
+ * Clase Tarea con sus atributos y metodos basicos
  */
 public class Tarea {
     private int id;
