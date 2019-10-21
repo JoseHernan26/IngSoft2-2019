@@ -87,6 +87,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("Detalles Tarea");
 
@@ -173,6 +174,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+
                                 .addComponent(isPredef)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(agregar_tarea))
@@ -209,6 +211,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                                 .addGap(54, 54, 54)
                                 .addComponent(nombre_tarea))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+
                                 .addComponent(jLabel7)
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(46, 46, 46))))
@@ -335,7 +338,6 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     private void agregar_tareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_tareaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_agregar_tareaActionPerformed
