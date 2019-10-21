@@ -38,4 +38,12 @@ public class Funciones {
     public static String redondeo2String(Float f){
         return  String.format(Locale.US,"%.2f",f);
     }
+    public static boolean isNumeric(String cadena){
+        try {
+		Integer.parseInt(cadena);
+		return true;
+	} catch (NumberFormatException nfe){
+		return false;
+	}
+    }
 }
