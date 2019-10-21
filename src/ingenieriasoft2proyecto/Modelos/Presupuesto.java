@@ -32,6 +32,10 @@ public class Presupuesto {
         this.insumos = insumos;
     }
 
+    public Presupuesto() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     
     public int getIdEmpleado() {
         return idEmpleado;
