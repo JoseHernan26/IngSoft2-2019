@@ -7,6 +7,7 @@ package ingenieriasoft2proyecto;
 
 import ingenieriasoft2proyecto.Modelos.Producto;
 import ingenieriasoft2proyecto.Modelos.Tarea;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public interface TareasMvp {
     interface Dao{
-        public List<Tarea> getPredefs();
+        public HashMap<String,Tarea> getPredefs();
         public List<Producto> getAll();
         //no se si dejarla
         public List<Producto> getProducts(String nombre);
@@ -25,11 +26,11 @@ public interface TareasMvp {
     
     interface Controller{
         public void buscarProductos(String textBuscador);
-        public void agregarRepuesto(Producto p);
+        public void agregarRepuesto(String p);
         public void agregarTarea(Tarea tarea, boolean isPredef);
     }
     interface View{
-        public void mostrarPredefinidas(List<Tarea> tareas);
+        public void mostrarPredefinidas(HashMap<String,Tarea> tareas);
         public void mostrarTablaRepuestos(List repuestos);
         public void mostrarExito();
         public void mostrarError(String text);
