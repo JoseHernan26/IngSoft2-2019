@@ -32,6 +32,9 @@ public class Presupuesto {
         this.insumos = insumos;
     }
 
+    public Presupuesto() {
+        
+    }
     
     public int getIdEmpleado() {
         return idEmpleado;

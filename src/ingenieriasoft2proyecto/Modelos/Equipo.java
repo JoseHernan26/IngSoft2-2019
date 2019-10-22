@@ -38,6 +38,9 @@ public class Equipo {
         this.marca = marca;
     }
 
+    public Equipo() {
+        
+    }
     public int getId() {
         return id;
     }

@@ -10,6 +10,7 @@ import ingenieriasoft2proyecto.Modelos.Tarea;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,6 +30,7 @@ public class TareasDao implements TareasMvp.Dao{
     public List<Producto> getAll() {
         String SQL;
         SQL = "SELECT * FROM Producto WHERE tipo = 'REPUESTO' ";
+
         ResultSet rs = conect.EjecutarConsultaSQL(SQL);
         List<Producto> list = new ArrayList<>();
         try{
@@ -121,11 +123,11 @@ public class TareasDao implements TareasMvp.Dao{
     }
 
     @Override
-    public List<Tarea> getPredefs() {
+    public HashMap<String,Tarea> getPredefs() {
         String SQL;
         SQL = "SELECT * FROM tareapredef";
         ResultSet rs = conect.EjecutarConsultaSQL(SQL);
-        List<Tarea> list = new ArrayList<>();
+        HashMap<String,Tarea> list = new HashMap<>();
         try{
             Tarea p;
             while(rs.next()){
@@ -135,7 +137,7 @@ public class TareasDao implements TareasMvp.Dao{
                 p.setGarantia(rs.getInt("garantia"));
                 p.setValorServicio(rs.getFloat("int"));
                 p.setDescripcion(rs.getString("int"));
-                list.add(p);
+                list.put(p.getNombre(),p);
             }
         }catch(Exception ex){
             ex.printStackTrace();

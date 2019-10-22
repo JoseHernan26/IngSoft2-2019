@@ -5,17 +5,45 @@
  */
 package ingenieriasoft2proyecto.Vistas;
 
+import ingenieriasoft2proyecto.Funciones;
+import ingenieriasoft2proyecto.GestionarReparacionesController;
+import ingenieriasoft2proyecto.GestionarReparacionesMVP;
+import ingenieriasoft2proyecto.Modelos.Equipo;
+import ingenieriasoft2proyecto.Modelos.Presupuesto;
+import ingenieriasoft2proyecto.Modelos.Reparacion;
+import ingenieriasoft2proyecto.Modelos.Tarea;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Note250
  */
-public class Principal extends javax.swing.JFrame {
-
+public class Principal extends javax.swing.JFrame implements GestionarReparacionesMVP.View {
+    public DefaultTableModel modeloTablaSeleccionarPresupuestos;
+    private GestionarReparacionesMVP.Controller mController;
+    private List<Tarea> listTareas;
+    private List<Equipo> equipos;
+    private Presupuesto presupuesto;
+    private Equipo equipo;
     /**
      * Creates new form Principal
      */
     public Principal(int tipo) {
+        mController = new GestionarReparacionesController(this);
+        //mController.mostarPresupuestos();
+        equipos =mController.obtenerEquipos();
+        DefaultTableModel model = (DefaultTableModel) jTableGestRepListadoTareasSeleccionadas.getModel();
+        model.setRowCount(0);
+        for(Equipo e : equipos){
+            Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
+            model.addRow(nuevoEquipo);
+        }
         initComponents();
+        //capturo los modelos de la pestaña gestionar reparaciones
+        modeloTablaSeleccionarPresupuestos= (DefaultTableModel) jTableGestRepEquiposParaReparar.getModel();
+        
     }
 
     /**
@@ -30,46 +58,45 @@ public class Principal extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTableEquiposParaReparar = new javax.swing.JTable();
+        jTableGestRepEquiposParaReparar = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        passwordLogin = new javax.swing.JTextField();
+        jButtonAltaTarea = new javax.swing.JButton();
+        jButtonEliminarTarea = new javax.swing.JButton();
+        jButtonModificarTarea = new javax.swing.JButton();
+        jButtonFinalizarReparacion = new javax.swing.JButton();
+        jTextF2Falla = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        jLabelFechaIngreso = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTableListadoTareasSeleccionadas = new javax.swing.JTable();
-        passwordLogin1 = new javax.swing.JTextField();
-        passwordLogin2 = new javax.swing.JTextField();
-        passwordLogin3 = new javax.swing.JTextField();
-        passwordLogin4 = new javax.swing.JTextField();
-        jTextField1 = new javax.swing.JTextField();
+        jTableGestRepListadoTareasSeleccionadas = new javax.swing.JTable();
+        jTextFiEstadoRecepcionEqui = new javax.swing.JTextField();
+        jTextFiEstadoEquipo = new javax.swing.JTextField();
+        jTextFMarca = new javax.swing.JTextField();
+        jTextFModelo = new javax.swing.JTextField();
+        jTextF1GestionRepBuscarEquipos = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jTableEquiposParaReparar.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
-        jTableEquiposParaReparar.setModel(new javax.swing.table.DefaultTableModel(
+        jTableGestRepEquiposParaReparar.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
+        jTableGestRepEquiposParaReparar.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Modelo", "Marca", "Fecha Ingreso", "Estado"
+                "Modelo", "Marca", "Fecha Ingreso", "Estado", "Id"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -80,51 +107,62 @@ public class Principal extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTableEquiposParaReparar);
+        jTableGestRepEquiposParaReparar.setColumnSelectionAllowed(true);
+        jTableGestRepEquiposParaReparar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableGestRepEquiposParaRepararMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTableGestRepEquiposParaReparar);
+        jTableGestRepEquiposParaReparar.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
 
         jLabel1.setText("Modelo");
 
         jLabel2.setText("SELECCIONE UN EQUIPO");
-
-        jButton1.setText("Alta Tarea");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonAltaTarea.setText("Alta Tarea");
+        jButtonAltaTarea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonAltaTareaActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Eliminar Tarea");
+        jButtonEliminarTarea.setText("Eliminar Tarea");
 
-        jButton4.setText("Modificar Tarea");
+        jButtonModificarTarea.setText("Modificar Tarea");
 
-        jButton5.setText("Finalizar Reparación");
+        jButtonFinalizarReparacion.setText("Finalizar Reparación");
+
+        jTextF2Falla.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextF2FallaActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Marca");
 
         jLabel4.setText("Fecha de Ingreso");
 
         jLabel5.setText("Falla");
-
-        jLabel6.setText("jLabel6");
+        jLabelFechaIngreso.setText("alguna fecha ");
 
         jLabel7.setText("Estado");
 
         jLabel8.setText("Estado recepcion");
-
-        jTableListadoTareasSeleccionadas.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
-        jTableListadoTareasSeleccionadas.setModel(new javax.swing.table.DefaultTableModel(
+        jTableGestRepListadoTareasSeleccionadas.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
+        jTableGestRepListadoTareasSeleccionadas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Tarea", "Detalle", "Estado", "Repuesto "
+                "Nombre", "garantia", "Detalle"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -135,12 +173,22 @@ public class Principal extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTableListadoTareasSeleccionadas);
+        jScrollPane3.setViewportView(jTableGestRepListadoTareasSeleccionadas);
+        if (jTableGestRepListadoTareasSeleccionadas.getColumnModel().getColumnCount() > 0) {
+            jTableGestRepListadoTareasSeleccionadas.getColumnModel().getColumn(0).setPreferredWidth(100);
+            jTableGestRepListadoTareasSeleccionadas.getColumnModel().getColumn(1).setPreferredWidth(100);
+            jTableGestRepListadoTareasSeleccionadas.getColumnModel().getColumn(2).setPreferredWidth(200);
+        }
 
-        jTextField1.setText("Ingrese el nombre del equipo a buscar");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jTextF1GestionRepBuscarEquipos.setText("Ingrese el nombre del equipo a buscar");
+        jTextF1GestionRepBuscarEquipos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jTextF1GestionRepBuscarEquiposActionPerformed(evt);
+            }
+        });
+        jTextF1GestionRepBuscarEquipos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextF1GestionRepBuscarEquiposKeyPressed(evt);
             }
         });
 
@@ -158,11 +206,11 @@ public class Principal extends javax.swing.JFrame {
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButtonAltaTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(34, 34, 34)
-                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButtonModificarTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(38, 38, 38)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButtonEliminarTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,15 +220,15 @@ public class Principal extends javax.swing.JFrame {
                                 .addGap(116, 116, 116)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(passwordLogin4, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jTextFModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(passwordLogin3, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jTextFMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(passwordLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jTextF2Falla, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(163, 163, 163)
                                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
@@ -188,19 +236,21 @@ public class Principal extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(passwordLogin2)
-                                .addComponent(passwordLogin1)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE))
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jTextFiEstadoEquipo)
+                                .addComponent(jTextFiEstadoRecepcionEqui)
+                                .addComponent(jLabelFechaIngreso, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE))
+                            .addComponent(jTextF1GestionRepBuscarEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(19, 19, 19))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton5)
+                        .addComponent(jButtonFinalizarReparacion)
                         .addGap(31, 31, 31))))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 933, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2)
+                .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButton1, jButton2, jButton4});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonAltaTarea, jButtonEliminarTarea, jButtonModificarTarea});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,44 +258,41 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 210, Short.MAX_VALUE)
+                    .addComponent(jTextF1GestionRepBuscarEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(passwordLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextF2Falla, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelFechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(passwordLogin2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(passwordLogin3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFiEstadoEquipo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(passwordLogin4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jTextFModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(passwordLogin1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextFiEstadoRecepcionEqui, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButtonAltaTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonModificarTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonEliminarTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonFinalizarReparacion, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addContainerGap(92, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(383, Short.MAX_VALUE)))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jButton1, jButton2, jButton4});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jButtonAltaTarea, jButtonEliminarTarea, jButtonModificarTarea});
 
         jTabbedPane1.addTab("Gestionar Reparaciones", jPanel1);
 
@@ -257,7 +304,8 @@ public class Principal extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 582, Short.MAX_VALUE)
+
+            .addGap(0, 517, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("tab2", jPanel2);
@@ -270,7 +318,7 @@ public class Principal extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 582, Short.MAX_VALUE)
+            .addGap(0, 517, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("tab3", jPanel3);
@@ -283,19 +331,70 @@ public class Principal extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 65, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonAltaTareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAltaTareaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        AltaTarea altTarea= new AltaTarea(this);
+        altTarea.setVisible(true);
+        this.setVisible(false);
+        
+    }//GEN-LAST:event_jButtonAltaTareaActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jTextF1GestionRepBuscarEquiposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposActionPerformed
+        
+        
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposActionPerformed
+
+    private void jTextF2FallaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF2FallaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_jTextF2FallaActionPerformed
+
+    private void jTextF1GestionRepBuscarEquiposKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposKeyPressed
+        // TODO add your handling code here:
+        modeloTablaSeleccionarPresupuestos.setRowCount(0);
+        
+        String buscado;
+        buscado=jTextF1GestionRepBuscarEquipos.getText();
+        buscado = buscado.toUpperCase();
+        int i;
+        int fila =0;
+        for (Equipo e : equipos){
+            String buscando;
+            buscando = e.getModelo();
+            buscando=buscando.toUpperCase();
+            
+            if(buscando.contains(buscado)){
+                modeloTablaSeleccionarPresupuestos.addRow(new Object[5]);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getModelo(),fila,0);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getMarca(),fila,1);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getFechaRecepcion(),fila,2);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getEstado(),fila,3);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getId(),fila,4);
+                fila++;
+            }
+            
+        }
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposKeyPressed
+
+    private void jTableGestRepEquiposParaRepararMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaRepararMouseClicked
+        /* 
+        Integer codigoOrden = Integer.parseInt(String.valueOf(modeloTablaOrdenesPendientes.getValueAt(jTable2_TablaOrdenesPendientes.getSelectedRow(), 0)));
+        System.out.println("Recibi el codigo de la orden numero: " + codigoOrden);
+        modeloTablaAnalisisResultados.setRowCount(0);
+        cargarTablaAnalisisResultado(codigoOrden);
+        */
+        //primero capturo el identificador del presupuesto en la tabla que fue clikeado
+        Integer id= Integer.parseInt(String.valueOf(modeloTablaSeleccionarPresupuestos.getValueAt(jTableGestRepEquiposParaReparar.getSelectedRow(),4)));
+        //con el id debo hacer una consulta y cargar los campos, enviando el presupuesto al view
+        //this.mController.obtenerPresupuesto(idPresupuesto);
+        this.mController.obtenerReparacion(id);
+    }//GEN-LAST:event_jTableGestRepEquiposParaRepararMouseClicked
 
     /**
      * @param args the command line arguments
@@ -333,31 +432,59 @@ public class Principal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    public javax.swing.JButton jButtonAltaTarea;
+    public javax.swing.JButton jButtonEliminarTarea;
+    public javax.swing.JButton jButtonFinalizarReparacion;
+    public javax.swing.JButton jButtonModificarTarea;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    public javax.swing.JLabel jLabelFechaIngreso;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTableEquiposParaReparar;
-    private javax.swing.JTable jTableListadoTareasSeleccionadas;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField passwordLogin;
-    private javax.swing.JTextField passwordLogin1;
-    private javax.swing.JTextField passwordLogin2;
-    private javax.swing.JTextField passwordLogin3;
-    private javax.swing.JTextField passwordLogin4;
+    public javax.swing.JTable jTableGestRepEquiposParaReparar;
+    public javax.swing.JTable jTableGestRepListadoTareasSeleccionadas;
+    public javax.swing.JTextField jTextF1GestionRepBuscarEquipos;
+    public javax.swing.JTextField jTextF2Falla;
+    public javax.swing.JTextField jTextFMarca;
+    public javax.swing.JTextField jTextFModelo;
+    public javax.swing.JTextField jTextFiEstadoEquipo;
+    public javax.swing.JTextField jTextFiEstadoRecepcionEqui;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void mostrarTablaGestRepEquiposParaReparar(List presupuestos) {
+      
+    }
+
+    @Override
+    public void mostrarTablaGestRepListadoTareasSeleccionadas(Reparacion reparacion) {
+        
+    }
+
+    @Override
+    public void mostrarCamposReparacion(Reparacion reparacion) {
+        Equipo e = reparacion.getEquipo();
+        jTextFiEstadoEquipo.setText(String.valueOf(e.getEstado()));
+        jTextFMarca.setText(e.getMarca());
+        jTextFModelo.setText(e.getModelo());
+        jTextF2Falla.setText(e.getMotivoFalla());
+        jTextFiEstadoRecepcionEqui.setText(e.getDetallesIngreso());
+        jLabelFechaIngreso.setText(Funciones.dateFormat(e.getFechaRecepcion()));
+        DefaultTableModel model = (DefaultTableModel) jTableGestRepListadoTareasSeleccionadas.getModel();
+        model.setRowCount(0);
+        for(Tarea t : reparacion.getTareas()){
+            Object[] nuevaTarea = {t.getNombre(),String.valueOf(t.getGarantia()),t.getDescripcion()};
+            model.addRow(nuevaTarea);
+        }
+        
+    }
 }
