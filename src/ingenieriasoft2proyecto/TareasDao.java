@@ -29,7 +29,8 @@ public class TareasDao implements TareasMvp.Dao{
     @Override
     public List<Producto> getAll() {
         String SQL;
-        SQL = "SELECT * FROM Producto WHERE tipo = 'Repuesto' ";
+        SQL = "SELECT * FROM Producto WHERE tipo = 'REPUESTO' ";
+
         ResultSet rs = conect.EjecutarConsultaSQL(SQL);
         List<Producto> list = new ArrayList<>();
         try{

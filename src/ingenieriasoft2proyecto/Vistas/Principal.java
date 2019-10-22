@@ -40,7 +40,6 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
             model.addRow(nuevoEquipo);
         }
-        
         initComponents();
         //capturo los modelos de la pestaña gestionar reparaciones
         modeloTablaSeleccionarPresupuestos= (DefaultTableModel) jTableGestRepEquiposParaReparar.getModel();
@@ -84,7 +83,6 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         jPanel3 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jTableGestRepEquiposParaReparar.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
         jTableGestRepEquiposParaReparar.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -118,10 +116,10 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         jScrollPane2.setViewportView(jTableGestRepEquiposParaReparar);
         jTableGestRepEquiposParaReparar.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
+
         jLabel1.setText("Modelo");
 
         jLabel2.setText("SELECCIONE UN EQUIPO");
-
         jButtonAltaTarea.setText("Alta Tarea");
         jButtonAltaTarea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -146,13 +144,11 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         jLabel4.setText("Fecha de Ingreso");
 
         jLabel5.setText("Falla");
-
         jLabelFechaIngreso.setText("alguna fecha ");
 
         jLabel7.setText("Estado");
 
         jLabel8.setText("Estado recepcion");
-
         jTableGestRepListadoTareasSeleccionadas.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
         jTableGestRepListadoTareasSeleccionadas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -308,6 +304,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+
             .addGap(0, 517, Short.MAX_VALUE)
         );
 
@@ -341,7 +338,6 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     private void jButtonAltaTareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAltaTareaActionPerformed
         // TODO add your handling code here:
         AltaTarea altTarea= new AltaTarea(this);
@@ -466,7 +462,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
     @Override
     public void mostrarTablaGestRepEquiposParaReparar(List presupuestos) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+      
     }
 
     @Override

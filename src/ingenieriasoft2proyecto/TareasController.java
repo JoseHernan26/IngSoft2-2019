@@ -30,6 +30,7 @@ public class TareasController implements TareasMvp.Controller {
         this.mDao = new TareasDao(this);
         this.repuestos = mDao.getAll();
         this.predefinidas = mDao.getPredefs();
+
         mostrarAll();
         this.mView.mostrarPredefinidas(predefinidas);
     }
@@ -52,6 +53,7 @@ public class TareasController implements TareasMvp.Controller {
             Object[] row = new Object[4];
             for(Producto p : repuestos){
                 if(Funciones.compareStrings(p.getNombre(), buscador)){
+
                     row[1] = p.getGarantia();
                     row[0] = p.getNombre();
                     row[2] = p.getStock();
@@ -76,12 +78,15 @@ public class TareasController implements TareasMvp.Controller {
 
     @Override
     public void agregarTarea(Tarea tarea, boolean isPredef) {
+
         tarea.setInsumos(repuestosTarea);
         int respuesta = mDao.insertar(tarea);
         if(respuesta == 1){
             if(isPredef){
                 respuesta = mDao.insertarPredef(tarea);
+
                 predefinidas.put(tarea.getNombre(),tarea);
+
                 if(respuesta == 1){
                     mView.mostrarExito();
                 }else{

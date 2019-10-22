@@ -32,7 +32,6 @@ public class Reparacion {
     public void setTareas(List<Tarea> tareas) {
         this.tareas = tareas;
     }
-
     public Reparacion(int id, Equipo equipo, int idEmpleado, Date fechaFin, int total, String observacion) {
         this.id = id;
         this.equipo = equipo;

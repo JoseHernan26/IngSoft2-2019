@@ -26,6 +26,7 @@ public interface TareasMvp {
     
     interface Controller{
         public void buscarProductos(String textBuscador);
+
         public void agregarRepuesto(String p);
         public void agregarTarea(Tarea tarea, boolean isPredef);
     }
