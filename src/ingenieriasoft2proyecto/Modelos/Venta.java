@@ -7,22 +7,54 @@ package ingenieriasoft2proyecto.Modelos;
 
 import java.util.Date;
 import java.util.List;
-
+import ingenieriasoft2proyecto.VentaDAO;
+import ingenieriasoft2proyecto.Modelos.DetalleVenta;
 /**
  *
  * @author Note250
  */
 public class Venta {
+    private static int maxCodigo;
     private int id;
+    private int idEmpleado;
+    private int idCliente;
     private Date fecha;
-    private List<detalleVenta> detalles;
+    private List<DetalleVenta> detalles;
     private float total;
 
-    public Venta(int id, Date fecha, List<detalleVenta> detalles, float total) {
-        this.id = id;
+    public static void setMaxCode(int code){
+       maxCodigo = code;
+    }
+    public int getIdEmpleado() {
+        return idEmpleado;
+    }
+
+    public void setIdEmpleado(int idEmpleado) {
+        this.idEmpleado = idEmpleado;
+    }
+
+    public int getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(int idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    public Venta(){
+        this.maxCodigo++;
+        this.id = maxCodigo;
+    }
+    
+    public Venta(int id, int idEmpleado, int idCliente, Date fecha, List<DetalleVenta> detalles, float total) {
+        this.maxCodigo++;
+        this.id = maxCodigo;
+        this.idEmpleado = idEmpleado;
+        this.idCliente = idCliente;
         this.fecha = fecha;
         this.detalles = detalles;
         this.total = total;
+        
     }
 
     public int getId() {
@@ -41,11 +73,11 @@ public class Venta {
         this.fecha = fecha;
     }
 
-    public List<detalleVenta> getDetalles() {
+    public List<DetalleVenta> getDetalles() {
         return detalles;
     }
 
-    public void setDetalles(List<detalleVenta> detalles) {
+    public void setDetalles(List<DetalleVenta> detalles) {
         this.detalles = detalles;
     }
 
