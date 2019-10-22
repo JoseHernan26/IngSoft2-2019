@@ -8,6 +8,7 @@ package Modelos;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -18,11 +19,13 @@ public class Reparacion {
     private Equipo equipo;
     private int idEmpleado;
     private Date fechaFin;
-    private int total;
+    private float total;
     private String observacion;
     private List<Tarea> tareas = new ArrayList<>();
 
     public Reparacion() {
+        Random rnd = new Random(System.currentTimeMillis());
+        this.id = rnd.nextInt(9999);
     }
 
     public List<Tarea> getTareas() {
@@ -73,11 +76,11 @@ public class Reparacion {
         this.fechaFin = fechaFin;
     }
 
-    public int getTotal() {
+    public float getTotal() {
         return total;
     }
 
-    public void setTotal(int total) {
+    public void setTotal(float total) {
         this.total = total;
     }
 

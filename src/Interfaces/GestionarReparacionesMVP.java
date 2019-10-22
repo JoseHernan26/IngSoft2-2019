@@ -41,6 +41,7 @@ public interface GestionarReparacionesMVP {
         public ArrayList<Presupuesto> getPresupuestos();
         public HashMap<Integer,Equipo> getEquipos();
         public Reparacion getReparacion(int idEquipo);
+        public void insertarReparacion(Reparacion r);
     }
     
 }

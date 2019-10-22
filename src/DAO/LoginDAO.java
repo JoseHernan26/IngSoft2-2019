@@ -28,7 +28,7 @@ public class LoginDAO implements LoginMvp.Dao{
     }
     @Override
     public void start(String user, String pass) {
-        if(conect.Conectar().equals("Error")){
+        if(conect.Conectar().equals("ERROR")){
             mController.processResult(0);
         }else{
             String sql = "SELECT * FROM usuario,empleado WHERE user = '"+user+"' AND password = '"+pass+"' AND empleado.idEmpleado = usuario.idEmpleado";

@@ -10,7 +10,9 @@ import Modelos.Producto;
 import Modelos.Tarea;
 import Controllers.TareasController;
 import Interfaces.TareasMvp;
+import Modelos.Reparacion;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -28,15 +30,20 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     private TareasMvp.Controller mController;
     private HashMap<String,Tarea> tareasPredef;
     private Tarea tarea;
-    private Float subtotal;
+    private Float subtotal= 0f;
     private Principal principal;
+    private int idReparacion;
     /**
      * Creates new form AltaTarea
      */
-    public AltaTarea(Principal principal) {
-        this.principal = principal;
-        mController = new TareasController(this);
+    public AltaTarea(Principal principal, Reparacion reparacion) {
         initComponents();
+        this.principal = principal;
+        tarea = new Tarea();
+        System.out.println("reparacion.getId() = " + reparacion.getId());
+        idReparacion = reparacion.getId();
+        mController = new TareasController(this);
+        
     }
 
     /**
@@ -264,6 +271,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 return canEdit [columnIndex];
             }
         });
+        tabla_repuestos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tabla_repuestos);
 
         buscador_tarea.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -337,7 +345,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         pack();
     }// </editor-fold>//GEN-END:initComponents
     private void agregar_tareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_tareaActionPerformed
-        // TODO add your handling code here:
+        preEnvioDatos();
     }//GEN-LAST:event_agregar_tareaActionPerformed
 
     private void isPredefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isPredefActionPerformed
@@ -364,12 +372,28 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         DefaultTableModel temp = (DefaultTableModel) repuestos_tarea.getModel();
         int row = tabla_repuestos.getSelectedRow();
         Object nuevo[]= {tabla_repuestos.getValueAt(row, 0),tabla_repuestos.getValueAt(row, 1),1,tabla_repuestos.getValueAt(row, 3)};
-        temp.addRow(nuevo);
+        int repetido = -1;
+        subtotal = Float.parseFloat(String.valueOf(tabla_repuestos.getValueAt(row, 3)));
+        for(int i = 0 ; i <temp.getRowCount(); i++){
+            if(temp.getValueAt(i, 0).equals(nuevo[0])){
+                repetido = i;
+                int x = Integer.parseInt(String.valueOf(temp.getValueAt(i, 2)))+1;
+                temp.setValueAt(x, repetido, 2);
+            }
+        }
+        if(repetido == -1){
+            temp.addRow(nuevo);
+        }
         mController.agregarRepuesto((String) tabla_repuestos.getValueAt(row, 0));
     }//GEN-LAST:event_agregar_repuestoActionPerformed
 
     private void tareas_predefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tareas_predefActionPerformed
+        
         tarea = tareasPredef.get(String.valueOf(tareas_predef.getSelectedItem()));
+        if(tarea == null){
+            System.out.println("NO SE POR QUE LO LEE MAL");
+            return;
+        }
         isPredef.setSelected(true);
         nombre_tarea.setText(tarea.getNombre());
         descripcion_tarea.setText(tarea.getDescripcion());
@@ -378,8 +402,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         try{
             DefaultTableModel temp = (DefaultTableModel) repuestos_tarea.getModel();
             temp.setRowCount(0);
-            
-            for(Producto p : tarea.getInsumos()){
+            for(Producto p : tarea.getRepuestos()){
                 Object nuevo[]= {p.getNombre(),p.getGarantia(),1,p.getPrecio()};
                 temp.addRow(nuevo);
             }
@@ -418,7 +441,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AltaTarea(null).setVisible(true);
+                new AltaTarea(null,null).setVisible(true);
             }
         });
     }
@@ -455,16 +478,28 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     @Override
     public void mostrarPredefinidas(HashMap<String,Tarea> tareas) {
         tareasPredef = tareas;
-        for(String t : tareas.keySet()){
-            tareas_predef.addItem(t);
+        try{
+            tareas_predef.removeAllItems();
+            for(String t : tareasPredef.keySet()){
+                tareas_predef.addItem(t);
+            }
+        }catch(NullPointerException e){
+            e.printStackTrace();
+            System.out.println("Me vino vacia la lista de tareas predef");
         }
+        
     }
 
     @Override
     public void mostrarTablaRepuestos(List repuestos) {
         DefaultTableModel modelo = (DefaultTableModel) tabla_repuestos.getModel();
-        for(int i = 0 ; i < repuestos.size(); i++){
-            modelo.addRow((Object[]) repuestos.get(i));
+        try{
+            modelo.setRowCount(0);
+            for(int i = 0 ; i < repuestos.size(); i++){
+                modelo.addRow((Object[]) repuestos.get(i));
+            }
+        }catch(NullPointerException e){
+            System.out.println("Me vino vacia la lista de tareas predef");
         }
     }
 
@@ -487,6 +522,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     public void preEnvioDatos() {
         boolean haveError = false;
         if(Funciones.controlText(nombre_tarea.getText())){
+            if(tarea == null) tarea = new Tarea();
             tarea.setNombre(nombre_tarea.getText());
         }else{
             haveError = true;
@@ -501,15 +537,19 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         
         tarea.setDescripcion(descripcion_tarea.getText());
         try{
-            tarea.setValorServicio(Float.parseFloat(precio_tarea.getText()));
-            tarea.setSubTotal(subtotal+tarea.getValorServicio());
+            float valorServicio = Float.parseFloat(precio_tarea.getText());
+            tarea.setValorServicio(valorServicio);
+            subtotal +=valorServicio;
+            tarea.setSubTotal(subtotal);
         }catch(Exception e){
             haveError = true;
             precio_tarea.setBorder(rojo);
+            e.printStackTrace();
         }
         if(haveError){
             return;
         }
+        tarea.setIdReparacion(idReparacion);
         if(isPredef.isSelected()){
             mController.agregarTarea(tarea, true);  
         }else{

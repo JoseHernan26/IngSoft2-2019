@@ -31,9 +31,9 @@ public class ConexionBD {
     public String user = "root";
     public String pass = ""; 
 
-    public java.sql.Statement s;
-    public java.sql.ResultSet resultado;
-    public Connection conexion = null;
+    public static java.sql.Statement s;
+    public static java.sql.ResultSet resultado;
+    public static Connection conexion = null;
 
     public ConexionBD() {
        db+= nameBD;
@@ -83,6 +83,7 @@ public class ConexionBD {
             }
         }catch (SQLException e) {
             System.out.println("Problema al establecer la Conexión a la base de datos");
+            e.printStackTrace();
             return "ERROR";
         }catch (ClassNotFoundException ex){
             ex.printStackTrace();

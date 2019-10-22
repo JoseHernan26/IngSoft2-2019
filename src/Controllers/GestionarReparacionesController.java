@@ -12,6 +12,7 @@ import Modelos.Presupuesto;
 import Modelos.Reparacion;
 import Modelos.User;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -40,7 +41,8 @@ public class GestionarReparacionesController implements GestionarReparacionesMVP
 
     @Override
     public ArrayList<Equipo> obtenerEquipos() {
-        return (ArrayList<Equipo>) equipos.values();
+            ArrayList<Equipo> eq = new ArrayList<>(equipos.values());
+        return eq;
     }
     @Override
     public void obtenerReparacion(int id){
@@ -51,6 +53,7 @@ public class GestionarReparacionesController implements GestionarReparacionesMVP
                 rep = new Reparacion();
                 rep.setEquipo(e);
                 rep.setIdEmpleado(User.getUser().getIdEmpleado());
+                mDao.insertarReparacion(rep);
                 mView.mostrarCamposReparacion(rep);
                 break;
             }

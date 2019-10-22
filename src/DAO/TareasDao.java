@@ -32,7 +32,6 @@ public class TareasDao implements TareasMvp.Dao{
     public List<Producto> getAll() {
         String SQL;
         SQL = "SELECT * FROM Producto WHERE tipo = 'REPUESTO' ";
-
         ResultSet rs = conect.EjecutarConsultaSQL(SQL);
         List<Producto> list = new ArrayList<>();
         try{
@@ -40,7 +39,7 @@ public class TareasDao implements TareasMvp.Dao{
             while(rs.next()){
                 p = new Producto();
                 p.setId(rs.getInt("idProducto"));
-                p.setNombre(rs.getString("nombre"));
+                p.setNombre(rs.getString("nombre"));               
                 p.setStock(rs.getInt("stock"));
                 p.setGarantia(rs.getInt("garantia"));
                 p.setIdProveedor(rs.getInt("idProveedor"));
@@ -85,21 +84,27 @@ public class TareasDao implements TareasMvp.Dao{
         int respuestaTarea;
         int respuestaRepuesto;
         //preparando insert en tabla tarea
-        String values = "("+t.getId()+",'"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+","+t.getSubTotal()+");";
-        SQL = "INSERT INTO tarea (idTarea,nombre,garantia,descripcion,manoDeObra,subtotal) VALUES "+values;
+        String values = "("+t.getId()+",'"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+","+t.getSubTotal()+","+t.getIdReparacion()+");";
+        SQL = "INSERT INTO tarea (idTarea,nombre,garantia,descripcion,manoDeObra,subtotal,idReparacion) VALUES "+values;
         //Empieza la transaccion
+        System.out.println(SQL);
         conect.transaccionCommit("quitarAutoCommit");
         respuestaTarea = conect.EjecutarOperacion(SQL);
         if(respuestaTarea == 1){
-            //preparando insert en tabla RepuestoTarea
-            SQL = "INSERT INTO repuestotarea (idTarea,idProducto) VALUES ";
-            List<Producto> prods = t.getInsumos();
-            for (int i = 0; i< prods.size()-1 ; i++) {
-                values = "("+t.getId()+","+prods.get(i).getId()+")";
-                SQL += values+",";
+            if(t.getRepuestos().size() >0 ){
+                //preparando insert en tabla RepuestoTarea
+                SQL = "INSERT INTO repuestotarea (idTarea,idProducto,cantidad) VALUES ";
+                List<Producto> prods = t.getRepuestos();
+                for (int i = 0; i< prods.size()-1 ; i++) {
+                    values = "("+t.getId()+","+prods.get(i).getId()+","+prods.get(i).getStock()+")";
+                    SQL += values+",";
+                }
+                SQL += "("+t.getId()+","+prods.get(prods.size()-1).getId()+","+prods.get(prods.size()-1).getStock()+");";
+                respuestaRepuesto = conect.EjecutarOperacion(SQL);
+            }else{
+                respuestaRepuesto = 1;
             }
-            SQL += "("+t.getId()+","+prods.get(prods.size()-1).getId()+");";
-            respuestaRepuesto = conect.EjecutarOperacion(SQL);
+            
             if(respuestaRepuesto == 1){
                 conect.transaccionCommit("commit");
                 conect.transaccionCommit("activarCommit");
@@ -118,8 +123,9 @@ public class TareasDao implements TareasMvp.Dao{
 
     @Override
     public int insertarPredef(Tarea t) {
-        String values = "("+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+");";
-        String SQL = "INSERT INTO tareapredef (nombre,garantia,descripcion,manoDeObra)"+values+");";
+        String values = " ('"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+");";
+        String SQL = "INSERT INTO tareapredef (nombre,garantia,descripcion,valorServicio) VALUES "+values;
+        System.out.println(SQL);
         int respuesta = conect.EjecutarOperacion(SQL);
         return respuesta;
     }
@@ -134,11 +140,12 @@ public class TareasDao implements TareasMvp.Dao{
             Tarea p;
             while(rs.next()){
                 p = new Tarea();
-                p.setId(rs.getInt("int"));
+                p.setId(rs.getInt("idTareaPredef"));
                 p.setNombre(rs.getString("nombre"));
+                System.out.println("p.getNombre() = " + p.getNombre());
                 p.setGarantia(rs.getInt("garantia"));
-                p.setValorServicio(rs.getFloat("int"));
-                p.setDescripcion(rs.getString("int"));
+                p.setValorServicio(rs.getFloat("valorServicio"));
+                p.setDescripcion(rs.getString("descripcion"));
                 list.put(p.getNombre(),p);
             }
         }catch(Exception ex){

@@ -35,6 +35,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     private List<Equipo> equipos;
     private Presupuesto presupuesto;
     private Equipo equipo;
+    private Reparacion reparacion;
     public DefaultTableModel tablaProductos;
     public DefaultTableModel tablaFactura;
     ArrayList<Producto> productos;
@@ -47,10 +48,11 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
      * Creates new form Principal
      */
     public Principal(int tipo) {
+        initComponents();
         mController = new GestionarReparacionesController(this);
         //mController.mostarPresupuestos();
         equipos =mController.obtenerEquipos();
-        DefaultTableModel model = (DefaultTableModel) jTableGestRepListadoTareasSeleccionadas.getModel();
+        DefaultTableModel model = (DefaultTableModel) jTableGestRepEquiposParaReparar.getModel();
         model.setRowCount(0);
         for(Equipo e : equipos){
             Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
@@ -64,7 +66,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         vc = new VentaControler(this);
         venta = new Venta();
         limpiar();
-        initComponents();
+        
         //capturo los modelos de la pestaña gestionar reparaciones
         modeloTablaSeleccionarPresupuestos= (DefaultTableModel) jTableGestRepEquiposParaReparar.getModel();
         
@@ -499,7 +501,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     }// </editor-fold>//GEN-END:initComponents
     private void jButtonAltaTareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAltaTareaActionPerformed
         // TODO add your handling code here:
-        AltaTarea altTarea= new AltaTarea(this);
+        AltaTarea altTarea= new AltaTarea(this,reparacion);
         altTarea.setVisible(true);
         this.setVisible(false);
         
@@ -552,6 +554,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         Integer id= Integer.parseInt(String.valueOf(modeloTablaSeleccionarPresupuestos.getValueAt(jTableGestRepEquiposParaReparar.getSelectedRow(),4)));
         //con el id debo hacer una consulta y cargar los campos, enviando el presupuesto al view
         //this.mController.obtenerPresupuesto(idPresupuesto);
+        System.out.println("entro a mouse clicked");
         this.mController.obtenerReparacion(id);
     }//GEN-LAST:event_jTableGestRepEquiposParaRepararMouseClicked
 
@@ -688,7 +691,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             venta.setDetalles(factura);
             Date fechaHoy = new Date();
             venta.setFecha(fechaHoy);
-
+            vc.insertarVenta(venta);
         }
     }//GEN-LAST:event_jButtonVenderActionPerformed
 
@@ -781,6 +784,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
     @Override
     public void mostrarCamposReparacion(Reparacion reparacion) {
+        this.reparacion = reparacion;
         Equipo e = reparacion.getEquipo();
         jTextFiEstadoEquipo.setText(String.valueOf(e.getEstado()));
         jTextFMarca.setText(e.getMarca());
@@ -791,6 +795,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         DefaultTableModel model = (DefaultTableModel) jTableGestRepListadoTareasSeleccionadas.getModel();
         model.setRowCount(0);
         for(Tarea t : reparacion.getTareas()){
+            System.out.println("for tareas de la reparacion");
             Object[] nuevaTarea = {t.getNombre(),String.valueOf(t.getGarantia()),t.getDescripcion()};
             model.addRow(nuevaTarea);
         }

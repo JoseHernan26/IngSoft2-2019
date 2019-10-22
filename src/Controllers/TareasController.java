@@ -26,21 +26,22 @@ public class TareasController implements TareasMvp.Controller {
     private TareasMvp.Dao mDao;
     private List<Producto> repuestos;
     private HashMap<String,Tarea> predefinidas;
-    private List<Producto> repuestosTarea;
+    private HashMap<String,Producto> repuestosTarea;
     
     public TareasController(TareasMvp.View mView) {
         this.mView = mView;
         this.mDao = new TareasDao(this);
         this.repuestos = mDao.getAll();
         this.predefinidas = mDao.getPredefs();
-
+        this.repuestosTarea = new HashMap<String,Producto>();
         mostrarAll();
+        System.out.println("predefinidas.size() = " + predefinidas.size());
         this.mView.mostrarPredefinidas(predefinidas);
     }
     public void mostrarAll(){
         List<Object> filas = new ArrayList<>();
-        Object[] row = new Object[4];
         for(Producto p : repuestos){
+            Object[] row = new Object[4];
             row[0] = p.getNombre();
             row[1] = p.getGarantia();
             row[2] = p.getStock();
@@ -51,12 +52,20 @@ public class TareasController implements TareasMvp.Controller {
     }
     @Override
     public void buscarProductos(String buscador) {
+        List<Object> filas = new ArrayList<>();
         if(Funciones.controlText(buscador)){
-            List<Object> filas = new ArrayList<>();
-            Object[] row = new Object[4];
+            for(Producto p : repuestos){
+                    Object[] row = new Object[4];
+                    row[1] = p.getGarantia();
+                    row[0] = p.getNombre();
+                    row[2] = p.getStock();
+                    row[3] = p.getPrecio();
+                    filas.add(row);
+            }
+        }else{
             for(Producto p : repuestos){
                 if(Funciones.compareStrings(p.getNombre(), buscador)){
-
+                    Object[] row = new Object[4];
                     row[1] = p.getGarantia();
                     row[0] = p.getNombre();
                     row[2] = p.getStock();
@@ -74,15 +83,21 @@ public class TareasController implements TareasMvp.Controller {
         for(Producto prod : repuestos){
             if(prod.getNombre().equals(p)){
                 System.out.println("agrego el producto");
-                repuestos.add(prod);
+                if(repuestosTarea.containsKey(prod.getNombre())){
+                    prod.setStock(repuestosTarea.get(prod.getNombre()).getStock()+1);
+                    repuestosTarea.replace(prod.getNombre(),prod);
+                }else{
+                    prod.setStock(1);
+                    repuestosTarea.put(prod.getNombre(),prod);
+                }
             }
         }
     }
 
     @Override
     public void agregarTarea(Tarea tarea, boolean isPredef) {
-
-        tarea.setInsumos(repuestosTarea);
+        ArrayList<Producto> prods = new ArrayList<>(repuestosTarea.values());
+        tarea.setRepuestos(prods);
         int respuesta = mDao.insertar(tarea);
         if(respuesta == 1){
             if(isPredef){

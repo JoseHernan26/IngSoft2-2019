@@ -6,6 +6,7 @@
 package Modelos;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -17,12 +18,22 @@ public class Tarea {
     private int garantia;
     private String nombre;
     private String descripcion;
-    private float valorServicio;
-    private float subTotal;
-    private List<Producto> insumos;
+    private float valorServicio = 0f;
+    private float subTotal= 0f;
+    private List<Producto> repuestos;
+    private int idReparacion;
 
+    public int getIdReparacion() {
+        return idReparacion;
+    }
+
+    public void setIdReparacion(int idReparacion) {
+        this.idReparacion = idReparacion;
+    }
+    
     public Tarea() {
-        //GENERAR ID PROPIO
+        Random rnd = new Random(System.currentTimeMillis());
+        this.id = rnd.nextInt(9999);
     }
 
     public int getId() {
@@ -33,14 +44,14 @@ public class Tarea {
         this.id = id;
     }
 
-    public Tarea(int id, int garantia, String nombre, String descripcion, float valorServicio, float subTotal, List<Producto> insumos) {
+    public Tarea(int id, int garantia, String nombre, String descripcion, float valorServicio, float subTotal, List<Producto> repuestos) {
         this.id = id;
         this.garantia = garantia;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.valorServicio = valorServicio;
         this.subTotal = subTotal;
-        this.insumos = insumos;
+        this.repuestos = repuestos;
     }
 
     public int getGarantia() {
@@ -83,12 +94,12 @@ public class Tarea {
         this.subTotal = subTotal;
     }
 
-    public List<Producto> getInsumos() {
-        return insumos;
+    public List<Producto> getRepuestos() {
+        return repuestos;
     }
 
-    public void setInsumos(List<Producto> insumos) {
-        this.insumos = insumos;
+    public void setRepuestos(List<Producto> repuestos) {
+        this.repuestos = repuestos;
     }
     
     

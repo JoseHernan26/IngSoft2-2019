@@ -43,7 +43,7 @@ public class Login extends javax.swing.JFrame implements LoginMvp.View {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         usuarioLogin = new javax.swing.JTextField();
-        passwordLogin = new javax.swing.JTextField();
+        passwordLogin = new javax.swing.JPasswordField();
         jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         ingresarLogin = new javax.swing.JButton();
@@ -68,6 +68,16 @@ public class Login extends javax.swing.JFrame implements LoginMvp.View {
                 passwordLoginFocusGained(evt);
             }
         });
+        passwordLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passwordLoginActionPerformed(evt);
+            }
+        });
+        passwordLogin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                passwordLoginKeyPressed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 0, 0));
@@ -76,6 +86,11 @@ public class Login extends javax.swing.JFrame implements LoginMvp.View {
         ingresarLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ingresarLoginActionPerformed(evt);
+            }
+        });
+        ingresarLogin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                ingresarLoginKeyPressed(evt);
             }
         });
 
@@ -168,6 +183,22 @@ public class Login extends javax.swing.JFrame implements LoginMvp.View {
         passwordLogin.setBorder(negro);
     }//GEN-LAST:event_passwordLoginFocusGained
 
+    private void passwordLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordLoginActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_passwordLoginActionPerformed
+
+    private void passwordLoginKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_passwordLoginKeyPressed
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            iniciarSesion(); //Método que tienes que crearte
+        }
+    }//GEN-LAST:event_passwordLoginKeyPressed
+
+    private void ingresarLoginKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ingresarLoginKeyPressed
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            iniciarSesion(); //Método que tienes que crearte
+        }
+    }//GEN-LAST:event_ingresarLoginKeyPressed
+
     /**
      * @param args the command line arguments
      */
@@ -240,7 +271,7 @@ public class Login extends javax.swing.JFrame implements LoginMvp.View {
     @Override
     public void finish(){
         try {
-            this.finalize();
+            this.dispose();
         } catch (Throwable ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
