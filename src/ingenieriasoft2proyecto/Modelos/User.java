@@ -13,8 +13,17 @@ public class User {
     private int id;
     private String usuario;
     private String password;
+    private String tipoEmpleado;
     private int idEmpleado;
+
     private static User user;
+    public String getTipoEmpleado() {
+        return tipoEmpleado;
+    }
+
+    public void setTipoEmpleado(String tipoEmpleado) {
+        this.tipoEmpleado = tipoEmpleado;
+    }
 
     public User() {
     }

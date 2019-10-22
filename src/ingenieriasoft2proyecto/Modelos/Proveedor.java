@@ -12,10 +12,10 @@ package ingenieriasoft2proyecto.Modelos;
 public class Proveedor {
     private int id;
     private String nombre;
-    private int telefono;
+    private String telefono;
     private String correo;
 
-    public Proveedor(int id, String nombre, int telefono, String correo) {
+    public Proveedor(int id, String nombre, String telefono, String correo) {
         this.id = id;
         this.nombre = nombre;
         this.telefono = telefono;
@@ -38,11 +38,11 @@ public class Proveedor {
         this.nombre = nombre;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
