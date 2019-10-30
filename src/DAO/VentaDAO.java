@@ -10,6 +10,7 @@ import Modelos.DetalleVenta;
 import Modelos.Producto;
 import Modelos.Venta;
 import Interfaces.VentaMVC;
+import Main.Funciones;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,7 @@ public class VentaDAO implements VentaMVC.DAO{
         int respuestaTarea;
         int respuestaRepuesto;
         //preparando insert en tabla tarea
-        String values = "("+venta.getId()+",'"+venta.getIdEmpleado()+"',"+venta.getIdCliente()+",'"+venta.getFecha()+"',"+venta.getTotal()+");";
+        String values = "("+venta.getId()+",'"+venta.getIdEmpleado()+"',"+venta.getIdCliente()+",'"+Funciones.dateFormat(venta.getFecha())+"',"+venta.getTotal()+");";
         SQL = "INSERT INTO venta (idVenta,idEmpleado,idCliente,fecha,total) VALUES "+values;
         //Empieza la transaccion
         conect.transaccionCommit("quitarAutoCommit");

@@ -108,13 +108,13 @@ public class TareasController implements TareasMvp.Controller {
                 if(respuesta == 1){
                     mView.mostrarExito();
                 }else{
-                    mView.mostrarError("Error al insertar la tarea como predefinida");
+                    mView.mostrarError("Error al agregar la tarea como predefinida");
                 }
             }else{
                 mView.mostrarExito();
             }
         }else{
-            mView.mostrarError("Error al insertar la tarea");
+            mView.mostrarError("Error al agregar la tarea");
         }
         repuestosTarea.clear();
     }

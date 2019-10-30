@@ -50,6 +50,7 @@ public class Login extends javax.swing.JFrame implements LoginMvp.View {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
+        setLocation(new java.awt.Point(350, 350));
         setResizable(false);
         setSize(new java.awt.Dimension(400, 400));
 

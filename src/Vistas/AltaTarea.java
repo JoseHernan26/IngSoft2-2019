@@ -391,6 +391,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         
         tarea = tareasPredef.get(String.valueOf(tareas_predef.getSelectedItem()));
         if(tarea == null){
+            tarea = new Tarea();
             System.out.println("NO SE POR QUE LO LEE MAL");
             return;
         }
@@ -522,7 +523,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     public void preEnvioDatos() {
         boolean haveError = false;
         if(Funciones.controlText(nombre_tarea.getText())){
-            if(tarea == null) tarea = new Tarea();
+            tarea = new Tarea();
             tarea.setNombre(nombre_tarea.getText());
         }else{
             haveError = true;
