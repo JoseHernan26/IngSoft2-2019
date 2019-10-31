@@ -501,7 +501,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     }// </editor-fold>//GEN-END:initComponents
     private void jButtonAltaTareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAltaTareaActionPerformed
         // TODO add your handling code here:
-        AltaTarea altTarea= new AltaTarea(this,reparacion);
+        AltaTarea altTarea= new AltaTarea(this,reparacion.getEquipo().getId());
         altTarea.setVisible(true);
         this.setVisible(false);
         

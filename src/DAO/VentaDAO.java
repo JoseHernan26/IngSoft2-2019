@@ -10,7 +10,6 @@ import Modelos.DetalleVenta;
 import Modelos.Producto;
 import Modelos.Venta;
 import Interfaces.VentaMVC;
-import Main.Funciones;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +66,7 @@ public class VentaDAO implements VentaMVC.DAO{
             SQL = "INSERT INTO detalleVenta(idProducto,idVenta,cantidad,subtotal) VALUES ";
             List<DetalleVenta> prods = venta.getDetalles();
             for (int i = 0; i< prods.size()-1 ; i++) {
-                values = "("+prods.get(i).getIdInsumo()+",(SELECT MAX(idVenta) FROM venta GROUP BY idVenta),"+prods.get(i).getCantidad()+","+prods.get(i).getSubtotal()+")";
+                values = "("+prods.get(i).getIdInsumo()+",(SELECT MAX(idVenta) FROM venta),"+prods.get(i).getCantidad()+","+prods.get(i).getSubtotal()+")";
                 String SQL1 = "UPDATE producto SET stock = stock -"+prods.get(1).getCantidad()+"WHERE idProducto = "+prods.get(1).getIdInsumo();
                 SQL += values+",";
                 conect.EjecutarOperacion(SQL1);

@@ -22,7 +22,6 @@ public class VentaControler implements VentaMVC.Controler{
     public VentaControler(VentaMVC.View mView) {
         this.mView = mView;
         this.mDao = new VentaDAO(this);
-        Venta.setMaxCode(mDao.getObtenerCodigo());
     }
     
     @Override

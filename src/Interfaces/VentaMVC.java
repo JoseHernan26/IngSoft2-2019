@@ -17,7 +17,6 @@ import java.util.List;
  */
 public class VentaMVC {
     public interface DAO{
-        public int getObtenerCodigo();
         public ArrayList<Producto> obtenerProductos();
         public int insertVenta(Venta venta);
     }

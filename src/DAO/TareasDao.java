@@ -84,11 +84,8 @@ public class TareasDao implements TareasMvp.Dao{
         int respuestaTarea;
         int respuestaRepuesto;
         //preparando insert en tabla tarea
-        String values = "('"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+","+t.getSubTotal()+","+t.getIdReparacion()+");";
+        String values = "('"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+","+t.getSubTotal()+",(SELECT idReparacion FROM reparacion WHERE idEquipo ="+t.getIdReparacion()+"));";
         SQL = "INSERT INTO tarea (nombre,garantia,descripcion,valorServicio,subtotal,idReparacion) VALUES "+values;
-        //Empieza la transaccion
-        conect.transaccionCommit("quitarAutoCommit");
-        System.out.println(t.getId());
         respuestaTarea = conect.EjecutarOperacion(SQL);
         if(respuestaTarea == 1){
             if(t.getRepuestos().size() >0 ){
@@ -97,31 +94,25 @@ public class TareasDao implements TareasMvp.Dao{
                 List<Producto> prods = t.getRepuestos();
                 ArrayList<String> descuentoProds = new ArrayList<>();
                 for (int i = 0; i< prods.size()-1 ; i++) {
-                    values = "("(SELECT MAX(idTarea) FROM tarea GROUP BY idTarea)","+prods.get(i).getId()+","+prods.get(i).getStock()+")";
+                    values = "((SELECT MAX(idTarea) FROM tarea),"+prods.get(i).getId()+","+prods.get(i).getStock()+")";
                     SQL += values+",";
                     descuentoProds.add("UPDATE producto SET stock= "+prods.get(i).getStock()+" WHERE idProducto = "+prods.get(i).getId());
                     String atr = "UPDATE producto SET stock = stock - "+prods.get(i).getStock()+" WHERE idProducto = "+prods.get(i).getId();
                     System.out.println("atr = " + atr);
                     conect.EjecutarOperacion("UPDATE producto SET stock= "+prods.get(i).getStock()+" WHERE idProducto = "+prods.get(i).getId());
                 }
-                SQL += "("+t.getId()+","+prods.get(prods.size()-1).getId()+","+prods.get(prods.size()-1).getStock()+");";
+                SQL += "((SELECT MAX(idTarea) FROM tarea),"+prods.get(prods.size()-1).getId()+","+prods.get(prods.size()-1).getStock()+");";
                 respuestaRepuesto = conect.EjecutarOperacion(SQL);
             }else{
                 respuestaRepuesto = 1;
             }
             
             if(respuestaRepuesto == 1){
-                conect.transaccionCommit("commit");
-                conect.transaccionCommit("activarCommit");
                 return respuestaRepuesto;
             }else{
-                conect.transaccionCommit("rollBack");
-                conect.transaccionCommit("activarCommit");
                 return respuestaRepuesto;
             }
         }else{
-            conect.transaccionCommit("rollBack");
-            conect.transaccionCommit("activarCommit");
             return respuestaTarea;
         }
     }

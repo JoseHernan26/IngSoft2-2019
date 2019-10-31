@@ -11,7 +11,6 @@ import Modelos.Tarea;
 import Controllers.TareasController;
 import Interfaces.TareasMvp;
 import Modelos.Reparacion;
-import com.placeholder.PlaceHolder;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -42,10 +41,9 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     /**
      * Creates new form AltaTarea
      */
-    public AltaTarea(Principal principal, Reparacion reparacion) {
+    public AltaTarea(Principal principal, int idEquipo) {
         this.principal = principal;
-        if(reparacion != null)
-            idReparacion = reparacion.getId();
+        idReparacion = idEquipo;
         System.out.println("idReparacion = " + idReparacion);
         initComponents();
         mController = new TareasController(this);
@@ -505,8 +503,6 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         descripcion_tarea.setText(tarea.getDescripcion());
         garantia_tarea.setText(String.valueOf(tarea.getGarantia()));
         precio_tarea.setText(Funciones.redondeo2String(tarea.getValorServicio()));
-        total_tarea.setText(precio_tarea.getText());
-        System.out.println(""+tarea.getSubTotal());
         try{
             DefaultTableModel temp = (DefaultTableModel) repuestos_tarea.getModel();
             temp.setRowCount(0);
@@ -552,7 +548,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AltaTarea(null,null).setVisible(true);
+                new AltaTarea(null,0).setVisible(true);
             }
         });
     }
@@ -606,7 +602,6 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 });
 
         }catch(NullPointerException e){
-            e.printStackTrace();
             System.out.println("Me vino vacia la lista de tareas predef");
         }
         

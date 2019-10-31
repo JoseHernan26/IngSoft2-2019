@@ -7,14 +7,11 @@ package Modelos;
 
 import java.util.Date;
 import java.util.List;
-import DAO.VentaDAO;
-import Modelos.DetalleVenta;
 /**
  *
  * @author Note250
  */
 public class Venta {
-    private static int maxCodigo;
     private int id;
     private int idEmpleado;
     private int idCliente;
@@ -22,9 +19,6 @@ public class Venta {
     private List<DetalleVenta> detalles;
     private float total;
 
-    public static void setMaxCode(int code){
-       maxCodigo = code;
-    }
     public int getIdEmpleado() {
         return idEmpleado;
     }
