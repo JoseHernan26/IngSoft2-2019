@@ -74,9 +74,8 @@ public class TareasController implements TareasMvp.Controller {
                     filas.add(row);
                 }
             }
-            mView.mostrarTablaRepuestos(filas);
         }
-        
+        mView.mostrarTablaRepuestos(filas);
     }
 
     @Override
