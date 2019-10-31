@@ -49,6 +49,8 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
      */
     public Principal(int tipo) {
         initComponents();
+        this.setLocationRelativeTo(null);
+        jTextF1GestionRepBuscarEquipos.setToolTipText("Ingrese el nombre del equipo a buscar");
         mController = new GestionarReparacionesController(this);
         //mController.mostarPresupuestos();
         equipos =mController.obtenerEquipos();
@@ -123,6 +125,15 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jTabbedPane1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jPanel1ComponentShown(evt);
+            }
+        });
+
         jTableGestRepEquiposParaReparar.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
         jTableGestRepEquiposParaReparar.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -161,6 +172,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         jLabel2.setText("SELECCIONE UN EQUIPO");
 
         jButtonAltaTarea.setText("Alta Tarea");
+        jButtonAltaTarea.setEnabled(false);
         jButtonAltaTarea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAltaTareaActionPerformed(evt);
@@ -168,10 +180,13 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         });
 
         jButtonEliminarTarea.setText("Eliminar Tarea");
+        jButtonEliminarTarea.setEnabled(false);
 
         jButtonModificarTarea.setText("Modificar Tarea");
+        jButtonModificarTarea.setEnabled(false);
 
         jButtonFinalizarReparacion.setText("Finalizar Reparación");
+        jButtonFinalizarReparacion.setEnabled(false);
 
         jTextF2Falla.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -223,6 +238,20 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         }
 
         jTextF1GestionRepBuscarEquipos.setText("Ingrese el nombre del equipo a buscar");
+        jTextF1GestionRepBuscarEquipos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextF1GestionRepBuscarEquiposMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jTextF1GestionRepBuscarEquiposMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jTextF1GestionRepBuscarEquiposMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTextF1GestionRepBuscarEquiposMouseReleased(evt);
+            }
+        });
         jTextF1GestionRepBuscarEquipos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextF1GestionRepBuscarEquiposActionPerformed(evt);
@@ -555,6 +584,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         //con el id debo hacer una consulta y cargar los campos, enviando el presupuesto al view
         //this.mController.obtenerPresupuesto(idPresupuesto);
         System.out.println("entro a mouse clicked");
+        jButtonAltaTarea.setEnabled(true);
         this.mController.obtenerReparacion(id);
     }//GEN-LAST:event_jTableGestRepEquiposParaRepararMouseClicked
 
@@ -694,6 +724,33 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             vc.insertarVenta(venta);
         }
     }//GEN-LAST:event_jButtonVenderActionPerformed
+
+    private void jTextF1GestionRepBuscarEquiposMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseEntered
+        // TODO add your handling code here
+        jTextF1GestionRepBuscarEquipos.setText("");
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseEntered
+
+    private void jTextF1GestionRepBuscarEquiposMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseReleased
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseReleased
+
+    private void jTextF1GestionRepBuscarEquiposMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseExited
+        // TODO add your handling code here:
+       
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseExited
+
+    private void jTextF1GestionRepBuscarEquiposMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseClicked
+        // TODO add your handling code here:
+        jTextF1GestionRepBuscarEquipos.setText("");
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseClicked
+
+    private void jPanel1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel1ComponentShown
+        // TODO add your handling code here:
+        if(reparacion != null){
+            this.mController.obtenerReparacion(reparacion.getId());
+        }
+    }//GEN-LAST:event_jPanel1ComponentShown
 
     /**
      * @param args the command line arguments
