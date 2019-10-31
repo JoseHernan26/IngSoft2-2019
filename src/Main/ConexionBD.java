@@ -6,13 +6,10 @@
 package Main;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 /**
  *
  * @author Note250
@@ -44,18 +41,23 @@ public class ConexionBD {
         try{
             switch(accion){
                 case "commit":{
+                    System.out.println("commit");
+
                     conexion.commit();
                     break;
                 }
                 case "quitarAutoCommit":{
+                    System.out.println("quitar AC");
                     conexion.setAutoCommit(false);
                     break;
                 }
                 case "activarCommit":{
+                    System.out.println("poner AC");
                     conexion.setAutoCommit(true);
                     break;
                 }
                 case "rollBack":{
+                    System.out.println("rollback");
                     conexion.rollback();
                     break;
                 }
@@ -65,7 +67,6 @@ public class ConexionBD {
                 System.out.println("SQLState "+e.getSQLState());
                 System.out.println("MENSAJE "+e.getMessage());
                 System.out.println("Error code "+e.getErrorCode());
-                e = e.getNextException();
             }
             
         }
@@ -83,10 +84,8 @@ public class ConexionBD {
             }
         }catch (SQLException e) {
             System.out.println("Problema al establecer la Conexión a la base de datos");
-            e.printStackTrace();
             return "ERROR";
         }catch (ClassNotFoundException ex){
-            ex.printStackTrace();
             System.out.println("Error de clase");
             return "ERROR";
         } 
@@ -124,13 +123,14 @@ public class ConexionBD {
         int respuesta = 0;
         try {           
             respuesta = this.s.executeUpdate(sql);
-                if(respuesta==1){
+                if(respuesta >= 1){
+                    respuesta = 1;
                     System.out.println("Registro Guardado");
                     return respuesta;
                 }
                 else{
-                    System.out.println("Ocurrio un problema al agregar el registro");
-                    return 2;
+                    System.out.println("Ocurrio un problema al agregar el registro");                
+                    return 0;
                 }
             } catch(SQLException ex){
                 // Mostramos toda la informacion sobre el error disponible

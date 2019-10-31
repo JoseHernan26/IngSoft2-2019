@@ -32,8 +32,7 @@ public class Tarea {
     }
     
     public Tarea() {
-        Random rnd = new Random(System.currentTimeMillis());
-        this.id = rnd.nextInt(9999);
+
     }
 
     public int getId() {

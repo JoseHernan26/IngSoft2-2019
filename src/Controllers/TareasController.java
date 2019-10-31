@@ -53,7 +53,8 @@ public class TareasController implements TareasMvp.Controller {
     @Override
     public void buscarProductos(String buscador) {
         List<Object> filas = new ArrayList<>();
-        if(Funciones.controlText(buscador)){
+        if(!Funciones.controlText(buscador)){
+
             for(Producto p : repuestos){
                     Object[] row = new Object[4];
                     row[1] = p.getGarantia();
@@ -109,6 +110,7 @@ public class TareasController implements TareasMvp.Controller {
                     mView.mostrarExito();
                 }else{
                     mView.mostrarError("Error al agregar la tarea como predefinida");
+
                 }
             }else{
                 mView.mostrarExito();

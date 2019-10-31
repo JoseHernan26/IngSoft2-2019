@@ -11,8 +11,13 @@ import Modelos.Tarea;
 import Controllers.TareasController;
 import Interfaces.TareasMvp;
 import Modelos.Reparacion;
+import com.placeholder.PlaceHolder;
 import java.awt.Color;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -29,19 +34,20 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     private Border negro = BorderFactory.createLineBorder(Color.BLACK, 1);
     private TareasMvp.Controller mController;
     private HashMap<String,Tarea> tareasPredef;
-    private Tarea tarea;
+    private Tarea tarea = null;
     private Float subtotal= 0f;
+    private ArrayList<Integer> garantia = new ArrayList<>();
     private Principal principal;
     private int idReparacion;
     /**
      * Creates new form AltaTarea
      */
     public AltaTarea(Principal principal, Reparacion reparacion) {
-        initComponents();
         this.principal = principal;
-        tarea = new Tarea();
-        System.out.println("reparacion.getId() = " + reparacion.getId());
-        idReparacion = reparacion.getId();
+        if(reparacion != null)
+            idReparacion = reparacion.getId();
+        System.out.println("idReparacion = " + idReparacion);
+        initComponents();
         mController = new TareasController(this);
         
     }
@@ -75,12 +81,15 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         descripcion_tarea = new javax.swing.JTextArea();
         jLabel8 = new javax.swing.JLabel();
         garantia_tarea = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        total_tarea = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla_repuestos = new javax.swing.JTable();
         buscador_tarea = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         agregar_repuesto = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -95,9 +104,12 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("Detalles Tarea");
 
+        agregar_tarea.setFont(new java.awt.Font("Trebuchet MS", 0, 11)); // NOI18N
         agregar_tarea.setText("Agregar tarea");
         agregar_tarea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -113,12 +125,13 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         });
 
         tareas_predef.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        tareas_predef.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tareas_predefActionPerformed(evt);
+        tareas_predef.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                tareas_predefItemStateChanged(evt);
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel3.setText("Tareas predefinidas");
 
         repuestos_tarea.setModel(new javax.swing.table.DefaultTableModel(
@@ -137,15 +150,25 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 return canEdit [columnIndex];
             }
         });
+        repuestos_tarea.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                repuestos_tareaMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(repuestos_tarea);
 
+        jLabel4.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel4.setText("Nombre: ");
 
+        jLabel5.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel5.setText("Descripción:");
 
+        jLabel6.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel6.setText("Valor del servicio");
 
-        jLabel7.setText("Repuestos requeridos");
+        jLabel7.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel7.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        jLabel7.setText("Repuestos de la tarea:");
 
         nombre_tarea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -158,16 +181,37 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 precio_tareaActionPerformed(evt);
             }
         });
+        precio_tarea.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                precio_tareaKeyTyped(evt);
+            }
+        });
 
         descripcion_tarea.setColumns(20);
         descripcion_tarea.setRows(5);
         jScrollPane3.setViewportView(descripcion_tarea);
 
+
+        jLabel8.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel8.setText("Garantia: (en meses)");
 
         garantia_tarea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 garantia_tareaActionPerformed(evt);
+            }
+        });
+        garantia_tarea.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                garantia_tareaKeyTyped(evt);
+            }
+        });
+
+        jLabel10.setText("total repuestos: ");
+
+        total_tarea.setEditable(false);
+        total_tarea.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                total_tareaActionPerformed(evt);
             }
         });
 
@@ -179,6 +223,9 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(isPredef)
@@ -188,38 +235,36 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(garantia_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(precio_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addGap(36, 36, 36)
+                                        .addComponent(jScrollPane3))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(tareas_predef, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING))
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel5)
-                                            .addComponent(jLabel8))
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(40, 40, 40)
-                                                .addComponent(jScrollPane3))
-                                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(garantia_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jLabel6)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(precio_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                        .addGap(0, 0, Short.MAX_VALUE)))
                                 .addGap(34, 34, 34)))
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(54, 54, 54)
-                                .addComponent(nombre_tarea))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabel4)
+                        .addGap(54, 54, 54)
+                        .addComponent(nombre_tarea)
                         .addGap(46, 46, 46))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(total_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -237,24 +282,29 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(precio_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(garantia_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23)
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(total_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(agregar_tarea)
                     .addComponent(isPredef))
                 .addContainerGap())
         );
 
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         tabla_repuestos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -272,23 +322,33 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
             }
         });
         tabla_repuestos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tabla_repuestos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabla_repuestosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabla_repuestos);
 
-        buscador_tarea.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                buscador_tareaKeyPressed(evt);
+        buscador_tarea.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                buscador_tareaCaretUpdate(evt);
             }
         });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Buscador repuestos");
 
+        agregar_repuesto.setFont(new java.awt.Font("Trebuchet MS", 0, 11)); // NOI18N
         agregar_repuesto.setText("Agregar repuesto");
         agregar_repuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 agregar_repuestoActionPerformed(evt);
             }
         });
+
+        jLabel9.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel9.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        jLabel9.setText("Lista de repuestos disponibles:");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -298,13 +358,15 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
+                    .addComponent(buscador_tarea)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(agregar_repuesto))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(buscador_tarea))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -314,8 +376,10 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 .addComponent(jLabel2)
                 .addGap(36, 36, 36)
                 .addComponent(buscador_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(3, 3, 3)
+                .addComponent(jLabel9)
+                .addGap(1, 1, 1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(agregar_repuesto)
                 .addContainerGap())
@@ -364,21 +428,20 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
        garantia_tarea.setBorder(negro);
     }//GEN-LAST:event_garantia_tareaActionPerformed
 
-    private void buscador_tareaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscador_tareaKeyPressed
-        mController.buscarProductos(buscador_tarea.getText());
-    }//GEN-LAST:event_buscador_tareaKeyPressed
-
     private void agregar_repuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_repuestoActionPerformed
         DefaultTableModel temp = (DefaultTableModel) repuestos_tarea.getModel();
-        int row = tabla_repuestos.getSelectedRow();
-        Object nuevo[]= {tabla_repuestos.getValueAt(row, 0),tabla_repuestos.getValueAt(row, 1),1,tabla_repuestos.getValueAt(row, 3)};
+        int row = tabla_repuestos.getSelectedRow();        
+        float subt = Float.parseFloat(String.valueOf(tabla_repuestos.getValueAt(row, 3)));
+        Object nuevo[]= {tabla_repuestos.getValueAt(row, 0),tabla_repuestos.getValueAt(row, 1),1,subt};
+        modificarGS(Integer.parseInt(String.valueOf(tabla_repuestos.getValueAt(row, 1))), subt);
         int repetido = -1;
-        subtotal = Float.parseFloat(String.valueOf(tabla_repuestos.getValueAt(row, 3)));
         for(int i = 0 ; i <temp.getRowCount(); i++){
             if(temp.getValueAt(i, 0).equals(nuevo[0])){
                 repetido = i;
                 int x = Integer.parseInt(String.valueOf(temp.getValueAt(i, 2)))+1;
                 temp.setValueAt(x, repetido, 2);
+                subt =  Integer.parseInt(String.valueOf(temp.getValueAt(i, 2))) * Float.parseFloat(String.valueOf(tabla_repuestos.getValueAt(row, 3)));
+                temp.setValueAt(subt, repetido, 3);
             }
         }
         if(repetido == -1){
@@ -386,20 +449,64 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         }
         mController.agregarRepuesto((String) tabla_repuestos.getValueAt(row, 0));
     }//GEN-LAST:event_agregar_repuestoActionPerformed
-
-    private void tareas_predefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tareas_predefActionPerformed
-        
-        tarea = tareasPredef.get(String.valueOf(tareas_predef.getSelectedItem()));
-        if(tarea == null){
-            tarea = new Tarea();
-            System.out.println("NO SE POR QUE LO LEE MAL");
-            return;
+    
+    private void repuestos_tareaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_repuestos_tareaMouseClicked
+        if(evt.getClickCount() == 2){
+            DefaultTableModel temp = (DefaultTableModel) repuestos_tarea.getModel();
+            int row = repuestos_tarea.getSelectedRow();
+            float subt = -1 * Float.parseFloat(String.valueOf(repuestos_tarea.getValueAt(row, 3)));
+            int garant = -1 * Integer.parseInt(String.valueOf(repuestos_tarea.getValueAt(row, 1)));
+            int cant = Integer.parseInt(String.valueOf(repuestos_tarea.getValueAt(row, 2)));
+            if(cant == 1){
+                temp.removeRow(row);
+                modificarGS(garant, subt);
+            }else{
+                float aux = subt / cant;
+                subt = subt - aux;
+                temp.setValueAt(subt, row, 3);
+                temp.setValueAt(cant-1, row, 2);
+                modificarGS(0,aux);
+            }
         }
+    }//GEN-LAST:event_repuestos_tareaMouseClicked
+
+    private void total_tareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_total_tareaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_total_tareaActionPerformed
+
+    private void garantia_tareaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_garantia_tareaKeyTyped
+        char caracter = evt.getKeyChar();
+        if(((caracter < '0') || (caracter > '9')) && (caracter != '\b')){
+            evt.consume();
+        }
+    }//GEN-LAST:event_garantia_tareaKeyTyped
+
+    private void precio_tareaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precio_tareaKeyTyped
+        char caracter = evt.getKeyChar();
+        if(((caracter < '0') || (caracter > '9')) && (caracter != '.' ) && (caracter != '\b')){
+            evt.consume();
+        }
+    }//GEN-LAST:event_precio_tareaKeyTyped
+
+    private void tabla_repuestosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabla_repuestosMouseClicked
+        if(evt.getClickCount() == 2){
+            agregar_repuesto.doClick();
+        }
+    }//GEN-LAST:event_tabla_repuestosMouseClicked
+
+    private void buscador_tareaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_buscador_tareaCaretUpdate
+        mController.buscarProductos(buscador_tarea.getText());
+    }//GEN-LAST:event_buscador_tareaCaretUpdate
+    public void cargarPredef(){
+        Tarea tarea = tareasPredef.get(String.valueOf(tareas_predef.getSelectedItem()));
+
         isPredef.setSelected(true);
         nombre_tarea.setText(tarea.getNombre());
         descripcion_tarea.setText(tarea.getDescripcion());
         garantia_tarea.setText(String.valueOf(tarea.getGarantia()));
-        precio_tarea.setText(Funciones.redondeo2String(tarea.getSubTotal()));
+        precio_tarea.setText(Funciones.redondeo2String(tarea.getValorServicio()));
+        total_tarea.setText(precio_tarea.getText());
+        System.out.println(""+tarea.getSubTotal());
         try{
             DefaultTableModel temp = (DefaultTableModel) repuestos_tarea.getModel();
             temp.setRowCount(0);
@@ -408,10 +515,13 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 temp.addRow(nuevo);
             }
         }catch(NullPointerException e){
-            
-        }
-    }//GEN-LAST:event_tareas_predefActionPerformed
 
+          // System.out.println("implementar a nivel de bd los repuestos = ");
+        }
+    }
+    private void tareas_predefItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_tareas_predefItemStateChanged
+       
+    }//GEN-LAST:event_tareas_predefItemStateChanged
     /**
      * @param args the command line arguments
      */
@@ -455,6 +565,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     private javax.swing.JTextField garantia_tarea;
     private javax.swing.JCheckBox isPredef;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -462,6 +573,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -474,6 +586,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     private javax.swing.JTable repuestos_tarea;
     private javax.swing.JTable tabla_repuestos;
     private javax.swing.JComboBox<String> tareas_predef;
+    private javax.swing.JTextField total_tarea;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -484,6 +597,14 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
             for(String t : tareasPredef.keySet()){
                 tareas_predef.addItem(t);
             }
+
+            tareas_predef.addItemListener(new ItemListener() {
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        cargarPredef();
+                    }
+                });
+
         }catch(NullPointerException e){
             e.printStackTrace();
             System.out.println("Me vino vacia la lista de tareas predef");
@@ -500,18 +621,17 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 modelo.addRow((Object[]) repuestos.get(i));
             }
         }catch(NullPointerException e){
-            System.out.println("Me vino vacia la lista de tareas predef");
+
+            System.out.println("Me vino vacia la lista de repuestos");
         }
     }
 
     @Override
     public void mostrarExito() {
-        int resp = JOptionPane.showConfirmDialog(null, "La tarea se agrego con exito.", "EXITO",JOptionPane.OK_OPTION,JOptionPane.INFORMATION_MESSAGE);
-        if(resp == 0){
+        JOptionPane.showMessageDialog(null, "La tarea se agrego con exito.");
             principal.setVisible(true);
             this.dispose();
-        }
-            
+
     }
 
     @Override
@@ -522,15 +642,28 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     @Override
     public void preEnvioDatos() {
         boolean haveError = false;
+
+        //control nombre
         if(Funciones.controlText(nombre_tarea.getText())){
-            tarea = new Tarea();
+            if(tarea == null) 
+                tarea = new Tarea();
             tarea.setNombre(nombre_tarea.getText());
         }else{
             haveError = true;
             nombre_tarea.setBorder(rojo);
         }
+
+        //control garantia
         try {
-		tarea.setGarantia(Integer.parseInt(garantia_tarea.getText()));
+                if(garantia.size() == 0){
+                    tarea.setGarantia(Integer.parseInt(garantia_tarea.getText()));
+                }else{
+                    Comparator<Integer> comparador = Collections.reverseOrder();
+                    Collections.sort(garantia, comparador);
+                    tarea.setGarantia(garantia.get(0));
+                }
+                
+ 
 	} catch (NumberFormatException nfe){
             haveError = true;
             garantia_tarea.setBorder(rojo);
@@ -545,19 +678,37 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         }catch(Exception e){
             haveError = true;
             precio_tarea.setBorder(rojo);
-            e.printStackTrace();
         }
         if(haveError){
             return;
         }
         tarea.setIdReparacion(idReparacion);
+        //control predefinida
         if(isPredef.isSelected()){
-            mController.agregarTarea(tarea, true);  
+            if(tareasPredef.containsKey(tarea.getNombre())){
+                int result = JOptionPane.showConfirmDialog(null, "Ya existe una tarea predefinida con ese nombre,\n "
+                        + "si continua la tarea no se agregara como predefinida.","Predefinida",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+                if(result == JOptionPane.YES_OPTION){
+                    mController.agregarTarea(tarea, false);
+                }
+            }else{
+                mController.agregarTarea(tarea, true);  
+            }
         }else{
             mController.agregarTarea(tarea, false);
         }
     }
-
+    public void modificarGS(int garant, float subt){
+        subtotal += subt;
+        if(garant  < 0){
+            garantia.remove(garant);
+        }else{
+            garantia.add(garant);
+        }
+        
+        
+        total_tarea.setText(Funciones.redondeo2String(subtotal));
+    }
     @Override
     public void preBusqueda() {
         

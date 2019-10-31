@@ -22,10 +22,9 @@ public class Reparacion {
     private float total;
     private String observacion;
     private List<Tarea> tareas = new ArrayList<>();
+    
+  public Reparacion() {
 
-    public Reparacion() {
-        Random rnd = new Random(System.currentTimeMillis());
-        this.id = rnd.nextInt(9999);
     }
 
     public List<Tarea> getTareas() {

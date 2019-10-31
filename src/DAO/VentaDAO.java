@@ -27,21 +27,6 @@ public class VentaDAO implements VentaMVC.DAO{
         this.conect = new ConexionBD();
     }
     @Override
-    public int getObtenerCodigo() {
-        String SQL = "SELECT MAX(idVenta) FROM venta GROUP BY idVenta";
-        ResultSet rs = conect.EjecutarConsultaSQL(SQL);
-        int maxId = 0;
-        try{
-            while (rs.next()) {
-                maxId = rs.getInt("idVenta");
-                return maxId;
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return 999;
-    }
-    @Override
     public ArrayList<Producto> obtenerProductos() {
         String SQL;
         SQL = "SELECT * FROM Producto WHERE tipo = 'INSUMO'";
@@ -72,8 +57,8 @@ public class VentaDAO implements VentaMVC.DAO{
         int respuestaTarea;
         int respuestaRepuesto;
         //preparando insert en tabla tarea
-        String values = "("+venta.getId()+",'"+venta.getIdEmpleado()+"',"+venta.getIdCliente()+",'"+Funciones.dateFormat(venta.getFecha())+"',"+venta.getTotal()+");";
-        SQL = "INSERT INTO venta (idVenta,idEmpleado,idCliente,fecha,total) VALUES "+values;
+        String values = "('"+venta.getIdEmpleado()+"',"+venta.getIdCliente()+",'"+venta.getFecha()+"',"+venta.getTotal()+");";
+        SQL = "INSERT INTO venta (idEmpleado,idCliente,fecha,total) VALUES "+values;
         //Empieza la transaccion
         conect.transaccionCommit("quitarAutoCommit");
         respuestaTarea = conect.EjecutarOperacion(SQL);
@@ -82,7 +67,7 @@ public class VentaDAO implements VentaMVC.DAO{
             SQL = "INSERT INTO detalleVenta(idProducto,idVenta,cantidad,subtotal) VALUES ";
             List<DetalleVenta> prods = venta.getDetalles();
             for (int i = 0; i< prods.size()-1 ; i++) {
-                values = "("+prods.get(i).getIdInsumo()+","+prods.get(i).getIdVenta()+","+prods.get(i).getCantidad()+","+prods.get(i).getSubtotal()+")";
+                values = "("+prods.get(i).getIdInsumo()+",(SELECT MAX(idVenta) FROM venta GROUP BY idVenta),"+prods.get(i).getCantidad()+","+prods.get(i).getSubtotal()+")";
                 String SQL1 = "UPDATE producto SET stock = stock -"+prods.get(1).getCantidad()+"WHERE idProducto = "+prods.get(1).getIdInsumo();
                 SQL += values+",";
                 conect.EjecutarOperacion(SQL1);

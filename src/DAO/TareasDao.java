@@ -84,20 +84,25 @@ public class TareasDao implements TareasMvp.Dao{
         int respuestaTarea;
         int respuestaRepuesto;
         //preparando insert en tabla tarea
-        String values = "("+t.getId()+",'"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+","+t.getSubTotal()+","+t.getIdReparacion()+");";
-        SQL = "INSERT INTO tarea (idTarea,nombre,garantia,descripcion,manoDeObra,subtotal,idReparacion) VALUES "+values;
+        String values = "('"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+","+t.getSubTotal()+","+t.getIdReparacion()+");";
+        SQL = "INSERT INTO tarea (nombre,garantia,descripcion,valorServicio,subtotal,idReparacion) VALUES "+values;
         //Empieza la transaccion
-        System.out.println(SQL);
         conect.transaccionCommit("quitarAutoCommit");
+        System.out.println(t.getId());
         respuestaTarea = conect.EjecutarOperacion(SQL);
         if(respuestaTarea == 1){
             if(t.getRepuestos().size() >0 ){
                 //preparando insert en tabla RepuestoTarea
                 SQL = "INSERT INTO repuestotarea (idTarea,idProducto,cantidad) VALUES ";
                 List<Producto> prods = t.getRepuestos();
+                ArrayList<String> descuentoProds = new ArrayList<>();
                 for (int i = 0; i< prods.size()-1 ; i++) {
-                    values = "("+t.getId()+","+prods.get(i).getId()+","+prods.get(i).getStock()+")";
+                    values = "("(SELECT MAX(idTarea) FROM tarea GROUP BY idTarea)","+prods.get(i).getId()+","+prods.get(i).getStock()+")";
                     SQL += values+",";
+                    descuentoProds.add("UPDATE producto SET stock= "+prods.get(i).getStock()+" WHERE idProducto = "+prods.get(i).getId());
+                    String atr = "UPDATE producto SET stock = stock - "+prods.get(i).getStock()+" WHERE idProducto = "+prods.get(i).getId();
+                    System.out.println("atr = " + atr);
+                    conect.EjecutarOperacion("UPDATE producto SET stock= "+prods.get(i).getStock()+" WHERE idProducto = "+prods.get(i).getId());
                 }
                 SQL += "("+t.getId()+","+prods.get(prods.size()-1).getId()+","+prods.get(prods.size()-1).getStock()+");";
                 respuestaRepuesto = conect.EjecutarOperacion(SQL);
@@ -110,12 +115,12 @@ public class TareasDao implements TareasMvp.Dao{
                 conect.transaccionCommit("activarCommit");
                 return respuestaRepuesto;
             }else{
-                conect.transaccionCommit("rollback");
+                conect.transaccionCommit("rollBack");
                 conect.transaccionCommit("activarCommit");
                 return respuestaRepuesto;
             }
         }else{
-            conect.transaccionCommit("rollback");
+            conect.transaccionCommit("rollBack");
             conect.transaccionCommit("activarCommit");
             return respuestaTarea;
         }
@@ -125,7 +130,6 @@ public class TareasDao implements TareasMvp.Dao{
     public int insertarPredef(Tarea t) {
         String values = " ('"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+");";
         String SQL = "INSERT INTO tareapredef (nombre,garantia,descripcion,valorServicio) VALUES "+values;
-        System.out.println(SQL);
         int respuesta = conect.EjecutarOperacion(SQL);
         return respuesta;
     }
@@ -142,14 +146,13 @@ public class TareasDao implements TareasMvp.Dao{
                 p = new Tarea();
                 p.setId(rs.getInt("idTareaPredef"));
                 p.setNombre(rs.getString("nombre"));
-                System.out.println("p.getNombre() = " + p.getNombre());
                 p.setGarantia(rs.getInt("garantia"));
                 p.setValorServicio(rs.getFloat("valorServicio"));
                 p.setDescripcion(rs.getString("descripcion"));
                 list.put(p.getNombre(),p);
             }
         }catch(Exception ex){
-            ex.printStackTrace();
+            System.out.println("Error al recuperar las tareas predefinidas "+ ex.getMessage());
         }
         return list; 
     }

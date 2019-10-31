@@ -18,7 +18,6 @@ public interface TareasMvp {
     interface Dao{
         public HashMap<String,Tarea> getPredefs();
         public List<Producto> getAll();
-        //no se si dejarla
         public List<Producto> getProducts(String nombre);
         public int insertar(Tarea t);
         public int insertarPredef(Tarea t);

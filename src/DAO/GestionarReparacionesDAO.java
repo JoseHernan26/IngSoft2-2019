@@ -30,7 +30,6 @@ public class GestionarReparacionesDAO implements GestionarReparacionesMVP.DAO {
         this.mController = mController;
         this.conect=new ConexionBD();
     }
-
     @Override
     public ArrayList<Presupuesto> getPresupuestos() {
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -74,33 +73,37 @@ public class GestionarReparacionesDAO implements GestionarReparacionesMVP.DAO {
     public Reparacion getReparacion(int idEquipo) {
         String SQL;
         SQL = "SELECT * FROM Reparacion WHERE idEquipo="+idEquipo;
-        ResultSet rs = conect.EjecutarConsultaSQL(SQL);
+        ResultSet rsReparacion = conect.EjecutarConsultaSQL(SQL);
+
         Reparacion rep;
         rep = new Reparacion();
         System.out.println(" HOla= "); 
         try{
-            
-            if(rs.next()){
+            if(rsReparacion.next()){
                 
-                rep.setId(rs.getInt("idReparacion"));
-                rep.setIdEmpleado(rs.getInt("idEmpleado"));
-                rep.setTotal(rs.getFloat("total"));
-                System.out.println("rep.getId() = " + rep.getId());
-                System.out.println("rep.getId() = " + rep.getId());
-                SQL= "SELECT * FROM Tarea WHERE idReparacion="+rep.getId();
-                ResultSet rs1=conect.EjecutarConsultaSQL(SQL);
-                Tarea tarea;
+                rep.setId(rsReparacion.getInt("idReparacion"));
+                rep.setIdEmpleado(rsReparacion.getInt("idEmpleado"));
+                rep.setTotal(rsReparacion.getFloat("total"));
                 List<Tarea> tareas = new ArrayList<Tarea>();
-                while(rs1.next()){
-                    tarea= new Tarea();
-                    tarea.setId(rs1.getInt("idTarea"));
-                    System.out.println("tarea.getId() = " + tarea.getId());
-                    tarea.setValorServicio(rs1.getFloat("manoDeObra"));
-                    tarea.setSubTotal(rs1.getFloat("subtotal"));
-                    tarea.setGarantia(rs1.getInt("garantia"));
-                    tarea.setNombre(rs1.getString("nombre"));
-                    tareas.add(tarea);
+                try{                    
+                    SQL= "SELECT * FROM Tarea WHERE idReparacion = "+rep.getId();
+                    ResultSet rsTarea=conect.EjecutarConsultaSQL(SQL);
+                    Tarea tarea;
+                    while(rsTarea.next()){
+                        tarea= new Tarea();
+                        tarea.setId(rsTarea.getInt("idTarea"));
+                        System.out.println("tarea.getId() = " + tarea.getId());
+                        tarea.setValorServicio(rsTarea.getFloat("valorServicio"));
+                        tarea.setSubTotal(rsTarea.getFloat("subtotal"));
+                        tarea.setDescripcion(rsTarea.getString("descripcion"));
+                        tarea.setGarantia(rsTarea.getInt("garantia"));
+                        tarea.setNombre(rsTarea.getString("nombre"));
+                        tareas.add(tarea);
+                    }
+                }catch(Exception e){
+                    System.out.println("Error al cargar las tareas o no tenia tareas"+e.getMessage());
                 }
+                try{
                 for(Tarea t : tareas){
                     //pidiendo prods
                     SQL = "SELECT producto.* FROM producto,repuestoTarea WHERE repuestoTarea.idTarea = "+t.getId()+" AND producto.idProducto = RepuestoTarea.idProducto";
@@ -120,20 +123,22 @@ public class GestionarReparacionesDAO implements GestionarReparacionesMVP.DAO {
                     }
                     t.setRepuestos(list);
                 }
+                }catch(Exception es){
+                    System.out.println("Error al insertar los repuestos de la tarea"+es.getMessage());
+                }
                 System.out.println("tareas = " + tareas);
                 rep.setTareas(tareas);
             }
         }catch (Exception ex){
-            ex.printStackTrace();
+            System.out.println("Error al encontrar la reparacion"+ex.getMessage());
         }
         return rep;
         }
 
     @Override
     public void insertarReparacion(Reparacion r) {
-        System.out.println("r.getId() = " + r.getId());
-        String values = " ("+r.getId()+","+r.getTotal()+","+r.getIdEmpleado()+","+r.getEquipo().getId()+");";
-        String SQL = "INSERT INTO reparacion (idReparacion,total,idEmpleado,idEquipo) VALUES "+values;
+        String values = " ("+r.getTotal()+","+r.getIdEmpleado()+","+r.getEquipo().getId()+");";
+        String SQL = "INSERT INTO reparacion (,total,idEmpleado,idEquipo) VALUES "+values;
         System.out.println(SQL);
         int respuesta = conect.EjecutarOperacion(SQL);
         SQL = "UPDATE equipo SET estado = "+"'REPARANDO' WHERE idEquipo = "+r.getEquipo().getId();
