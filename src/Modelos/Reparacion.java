@@ -22,13 +22,9 @@ public class Reparacion {
     private float total;
     private String observacion;
     private List<Tarea> tareas = new ArrayList<>();
-    private static int MaxId = 0;
-    public static void setMaxId(int id){
-        MaxId = id;
-    }
-    public Reparacion() {
-        id = MaxId;
-        MaxId++;
+    
+  public Reparacion() {
+
     }
 
     public List<Tarea> getTareas() {

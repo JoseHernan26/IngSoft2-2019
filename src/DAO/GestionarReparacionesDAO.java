@@ -30,25 +30,6 @@ public class GestionarReparacionesDAO implements GestionarReparacionesMVP.DAO {
         this.mController = mController;
         this.conect=new ConexionBD();
     }
-    
-    @Override
-    public int getMaxCode() {
-        String SQL = "SELECT `AUTO_INCREMENT` " +
-                    "FROM  INFORMATION_SCHEMA.TABLES " +
-                    "WHERE TABLE_SCHEMA = 'serviciotecnico' " +
-                    "AND   TABLE_NAME   = 'reparacion';";
-        ResultSet rs = conect.EjecutarConsultaSQL(SQL);
-        int maxId = 0;
-        try{
-            while (rs.next()) {
-                maxId = rs.getInt("id");
-                return maxId;
-            }
-        }catch(Exception e){
-            System.out.println("Error al traer el id de reparacion"+e.getMessage());
-        }
-        return 999;
-    }
     @Override
     public ArrayList<Presupuesto> getPresupuestos() {
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -93,6 +74,7 @@ public class GestionarReparacionesDAO implements GestionarReparacionesMVP.DAO {
         String SQL;
         SQL = "SELECT * FROM Reparacion WHERE idEquipo="+idEquipo;
         ResultSet rsReparacion = conect.EjecutarConsultaSQL(SQL);
+
         Reparacion rep;
         rep = new Reparacion();
         System.out.println(" HOla= "); 
@@ -155,9 +137,8 @@ public class GestionarReparacionesDAO implements GestionarReparacionesMVP.DAO {
 
     @Override
     public void insertarReparacion(Reparacion r) {
-        System.out.println("r.getId() = " + r.getId());
-        String values = " ("+r.getId()+","+r.getTotal()+","+r.getIdEmpleado()+","+r.getEquipo().getId()+");";
-        String SQL = "INSERT INTO reparacion (idReparacion,total,idEmpleado,idEquipo) VALUES "+values;
+        String values = " ("+r.getTotal()+","+r.getIdEmpleado()+","+r.getEquipo().getId()+");";
+        String SQL = "INSERT INTO reparacion (,total,idEmpleado,idEquipo) VALUES "+values;
         System.out.println(SQL);
         int respuesta = conect.EjecutarOperacion(SQL);
         SQL = "UPDATE equipo SET estado = "+"'REPARANDO' WHERE idEquipo = "+r.getEquipo().getId();

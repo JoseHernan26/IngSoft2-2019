@@ -191,6 +191,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         descripcion_tarea.setRows(5);
         jScrollPane3.setViewportView(descripcion_tarea);
 
+
         jLabel8.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel8.setText("Garantia: (en meses)");
 
@@ -304,7 +305,6 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-
         tabla_repuestos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -499,6 +499,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     }//GEN-LAST:event_buscador_tareaCaretUpdate
     public void cargarPredef(){
         Tarea tarea = tareasPredef.get(String.valueOf(tareas_predef.getSelectedItem()));
+
         isPredef.setSelected(true);
         nombre_tarea.setText(tarea.getNombre());
         descripcion_tarea.setText(tarea.getDescripcion());
@@ -514,13 +515,13 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 temp.addRow(nuevo);
             }
         }catch(NullPointerException e){
+
           // System.out.println("implementar a nivel de bd los repuestos = ");
         }
     }
     private void tareas_predefItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_tareas_predefItemStateChanged
        
     }//GEN-LAST:event_tareas_predefItemStateChanged
-
     /**
      * @param args the command line arguments
      */
@@ -596,12 +597,14 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
             for(String t : tareasPredef.keySet()){
                 tareas_predef.addItem(t);
             }
+
             tareas_predef.addItemListener(new ItemListener() {
                     @Override
                     public void itemStateChanged(ItemEvent e) {
                         cargarPredef();
                     }
                 });
+
         }catch(NullPointerException e){
             e.printStackTrace();
             System.out.println("Me vino vacia la lista de tareas predef");
@@ -618,6 +621,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                 modelo.addRow((Object[]) repuestos.get(i));
             }
         }catch(NullPointerException e){
+
             System.out.println("Me vino vacia la lista de repuestos");
         }
     }
@@ -627,7 +631,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         JOptionPane.showMessageDialog(null, "La tarea se agrego con exito.");
             principal.setVisible(true);
             this.dispose();
-            
+
     }
 
     @Override
@@ -638,6 +642,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     @Override
     public void preEnvioDatos() {
         boolean haveError = false;
+
         //control nombre
         if(Funciones.controlText(nombre_tarea.getText())){
             if(tarea == null) 
@@ -647,6 +652,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
             haveError = true;
             nombre_tarea.setBorder(rojo);
         }
+
         //control garantia
         try {
                 if(garantia.size() == 0){
@@ -657,13 +663,13 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
                     tarea.setGarantia(garantia.get(0));
                 }
                 
+ 
 	} catch (NumberFormatException nfe){
             haveError = true;
             garantia_tarea.setBorder(rojo);
 	}
         
         tarea.setDescripcion(descripcion_tarea.getText());
-        //control valor servicio
         try{
             float valorServicio = Float.parseFloat(precio_tarea.getText());
             tarea.setValorServicio(valorServicio);

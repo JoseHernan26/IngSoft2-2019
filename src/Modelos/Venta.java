@@ -42,13 +42,9 @@ public class Venta {
     }
   
     public Venta(){
-        this.id = maxCodigo;
-        this.maxCodigo++;
     }
     
-    public Venta(int id, int idEmpleado, int idCliente, Date fecha, List<DetalleVenta> detalles, float total) {
-        this.id = maxCodigo;
-        this.maxCodigo++;
+    public Venta(int idEmpleado, int idCliente, Date fecha, List<DetalleVenta> detalles, float total) {
         this.idEmpleado = idEmpleado;
         this.idCliente = idCliente;
         this.fecha = fecha;

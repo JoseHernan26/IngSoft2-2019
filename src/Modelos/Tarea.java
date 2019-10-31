@@ -22,10 +22,7 @@ public class Tarea {
     private float subTotal= 0f;
     private List<Producto> repuestos;
     private int idReparacion;
-    private static int MaxId = 0;
-    public static void setMaxId(int id){
-        MaxId = id;
-    }
+
     public int getIdReparacion() {
         return idReparacion;
     }
@@ -35,8 +32,7 @@ public class Tarea {
     }
     
     public Tarea() {
-        this.id = MaxId;
-        MaxId++;
+
     }
 
     public int getId() {

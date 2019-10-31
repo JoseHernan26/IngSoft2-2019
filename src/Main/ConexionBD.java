@@ -42,6 +42,7 @@ public class ConexionBD {
             switch(accion){
                 case "commit":{
                     System.out.println("commit");
+
                     conexion.commit();
                     break;
                 }
@@ -128,8 +129,7 @@ public class ConexionBD {
                     return respuesta;
                 }
                 else{
-                    System.out.println("Ocurrio un problema al agregar el registro");
-                    
+                    System.out.println("Ocurrio un problema al agregar el registro");                
                     return 0;
                 }
             } catch(SQLException ex){

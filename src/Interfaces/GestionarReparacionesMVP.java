@@ -39,7 +39,6 @@ public interface GestionarReparacionesMVP {
 
     public static interface DAO {
         public ArrayList<Presupuesto> getPresupuestos();
-        public int getMaxCode();
         public HashMap<Integer,Equipo> getEquipos();
         public Reparacion getReparacion(int idEquipo);
         public void insertarReparacion(Reparacion r);

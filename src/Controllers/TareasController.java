@@ -33,7 +33,6 @@ public class TareasController implements TareasMvp.Controller {
         this.mDao = new TareasDao(this);
         this.repuestos = mDao.getAll();
         this.predefinidas = mDao.getPredefs();
-        Tarea.setMaxId(mDao.getMaxCode());
         this.repuestosTarea = new HashMap<String,Producto>();
         mostrarAll();
         System.out.println("predefinidas.size() = " + predefinidas.size());
@@ -55,6 +54,7 @@ public class TareasController implements TareasMvp.Controller {
     public void buscarProductos(String buscador) {
         List<Object> filas = new ArrayList<>();
         if(!Funciones.controlText(buscador)){
+
             for(Producto p : repuestos){
                     Object[] row = new Object[4];
                     row[1] = p.getGarantia();
@@ -63,7 +63,6 @@ public class TareasController implements TareasMvp.Controller {
                     row[3] = p.getPrecio();
                     filas.add(row);
             }
-            System.out.println("filas.size() = " + filas.size());
         }else{
             for(Producto p : repuestos){
                 if(Funciones.compareStrings(p.getNombre(), buscador)){
@@ -110,13 +109,14 @@ public class TareasController implements TareasMvp.Controller {
                 if(respuesta == 1){
                     mView.mostrarExito();
                 }else{
-                    mView.mostrarError("Error al insertar la tarea como predefinida");
+                    mView.mostrarError("Error al agregar la tarea como predefinida");
+
                 }
             }else{
                 mView.mostrarExito();
             }
         }else{
-            mView.mostrarError("Error al insertar la tarea");
+            mView.mostrarError("Error al agregar la tarea");
         }
         repuestosTarea.clear();
     }

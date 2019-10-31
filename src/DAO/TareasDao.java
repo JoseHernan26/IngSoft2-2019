@@ -29,24 +29,6 @@ public class TareasDao implements TareasMvp.Dao{
     }
     
     @Override
-    public int getMaxCode() {
-        String SQL = "SELECT `AUTO_INCREMENT` " +
-                    "FROM  INFORMATION_SCHEMA.TABLES " +
-                    "WHERE TABLE_SCHEMA = 'serviciotecnico' " +
-                    "AND   TABLE_NAME   = 'tarea';";
-        ResultSet rs = conect.EjecutarConsultaSQL(SQL);
-        int maxId = 0;
-        try{
-            while (rs.next()) {
-                maxId = rs.getInt("AUTO_INCREMENT");
-                return maxId;
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return 999;
-    }
-    @Override
     public List<Producto> getAll() {
         String SQL;
         SQL = "SELECT * FROM Producto WHERE tipo = 'REPUESTO' ";
@@ -102,13 +84,12 @@ public class TareasDao implements TareasMvp.Dao{
         int respuestaTarea;
         int respuestaRepuesto;
         //preparando insert en tabla tarea
-        String values = "("+t.getId()+",'"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+","+t.getSubTotal()+","+t.getIdReparacion()+");";
-        SQL = "INSERT INTO tarea (idTarea,nombre,garantia,descripcion,valorServicio,subtotal,idReparacion) VALUES "+values;
+        String values = "('"+t.getNombre()+"',"+t.getGarantia()+",'"+t.getDescripcion()+"',"+t.getValorServicio()+","+t.getSubTotal()+","+t.getIdReparacion()+");";
+        SQL = "INSERT INTO tarea (nombre,garantia,descripcion,valorServicio,subtotal,idReparacion) VALUES "+values;
         //Empieza la transaccion
         conect.transaccionCommit("quitarAutoCommit");
         System.out.println(t.getId());
         respuestaTarea = conect.EjecutarOperacion(SQL);
-        conect.transaccionCommit("commit");
         if(respuestaTarea == 1){
             if(t.getRepuestos().size() >0 ){
                 //preparando insert en tabla RepuestoTarea
@@ -116,7 +97,7 @@ public class TareasDao implements TareasMvp.Dao{
                 List<Producto> prods = t.getRepuestos();
                 ArrayList<String> descuentoProds = new ArrayList<>();
                 for (int i = 0; i< prods.size()-1 ; i++) {
-                    values = "("+t.getId()+","+prods.get(i).getId()+","+prods.get(i).getStock()+")";
+                    values = "("(SELECT MAX(idTarea) FROM tarea GROUP BY idTarea)","+prods.get(i).getId()+","+prods.get(i).getStock()+")";
                     SQL += values+",";
                     descuentoProds.add("UPDATE producto SET stock= "+prods.get(i).getStock()+" WHERE idProducto = "+prods.get(i).getId());
                     String atr = "UPDATE producto SET stock = stock - "+prods.get(i).getStock()+" WHERE idProducto = "+prods.get(i).getId();
@@ -125,7 +106,6 @@ public class TareasDao implements TareasMvp.Dao{
                 }
                 SQL += "("+t.getId()+","+prods.get(prods.size()-1).getId()+","+prods.get(prods.size()-1).getStock()+");";
                 respuestaRepuesto = conect.EjecutarOperacion(SQL);
-                
             }else{
                 respuestaRepuesto = 1;
             }

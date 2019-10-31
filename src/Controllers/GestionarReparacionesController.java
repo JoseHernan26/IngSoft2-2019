@@ -12,6 +12,7 @@ import Modelos.Presupuesto;
 import Modelos.Reparacion;
 import Modelos.User;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -27,7 +28,6 @@ public class GestionarReparacionesController implements GestionarReparacionesMVP
     public GestionarReparacionesController(GestionarReparacionesMVP.View mView) {
         this.mView = mView;
         this.mDao = new GestionarReparacionesDAO (this);
-        Reparacion.setMaxId(this.mDao.getMaxCode());
         this.presupuestos = mDao.getPresupuestos();
         this.equipos = mDao.getEquipos();
     }
