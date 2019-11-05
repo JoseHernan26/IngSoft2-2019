@@ -68,7 +68,22 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         vc = new VentaControler(this);
         venta = new Venta();
         limpiar();
-        
+        switch(tipo){
+            case 1:
+            {
+                
+                break;
+            }
+            case 2:
+            {
+                jTabbedPane1.remove(1);
+                break;
+            }
+            case 3:
+            {
+                jTabbedPane1.remove(0);
+            }
+        }
         //capturo los modelos de la pestaña gestionar reparaciones
         modeloTablaSeleccionarPresupuestos= (DefaultTableModel) jTableGestRepEquiposParaReparar.getModel();
         
@@ -122,6 +137,24 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         jLabel6 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabelTotal = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTableGestRepEquiposParaReparar1 = new javax.swing.JTable();
+        jTextF2Falla1 = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jTextFModelo1 = new javax.swing.JTextField();
+        jTextFMarca1 = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jTextFiEstadoRecepcionEqui1 = new javax.swing.JTextField();
+        jTextFiEstadoEquipo1 = new javax.swing.JTextField();
+        jLabelFechaIngreso1 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jTableGestRepEquiposParaReparar2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -513,11 +546,180 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
         jTabbedPane1.addTab("Venta", jPanelVenta);
 
+        jTableGestRepEquiposParaReparar1.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
+        jTableGestRepEquiposParaReparar1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Modelo", "Marca", "Fecha Ingreso", "Estado", "Id"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableGestRepEquiposParaReparar1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableGestRepEquiposParaReparar1MouseClicked(evt);
+            }
+        });
+        jScrollPane5.setViewportView(jTableGestRepEquiposParaReparar1);
+        jTableGestRepEquiposParaReparar1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+        jTextF2Falla1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextF2Falla1ActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText("Falla");
+
+        jLabel11.setText("Marca");
+
+        jLabel12.setText("Modelo");
+
+        jLabel13.setText("Fecha de Ingreso");
+
+        jLabel14.setText("Estado");
+
+        jLabel15.setText("Estado recepcion");
+
+        jLabelFechaIngreso1.setText("alguna fecha ");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane5)
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(24, 24, 24)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(116, 116, 116)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jTextFModelo1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jTextFMarca1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jTextF2Falla1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(163, 163, 163)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jTextFiEstadoEquipo1)
+                        .addComponent(jTextFiEstadoRecepcionEqui1)
+                        .addComponent(jLabelFechaIngreso1, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE))
+                    .addGap(24, 24, 24)))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(58, 58, 58)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(352, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(204, 204, 204)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextF2Falla1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabelFechaIngreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextFiEstadoEquipo1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextFMarca1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFModelo1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFiEstadoRecepcionEqui1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addContainerGap(205, Short.MAX_VALUE)))
+        );
+
+        jTabbedPane1.addTab("Equipos reparados", jPanel2);
+
+        jTableGestRepEquiposParaReparar2.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
+        jTableGestRepEquiposParaReparar2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Modelo", "Marca", "Fecha Ingreso", "Estado", "Id"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableGestRepEquiposParaReparar2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableGestRepEquiposParaReparar2MouseClicked(evt);
+            }
+        });
+        jScrollPane6.setViewportView(jTableGestRepEquiposParaReparar2);
+        jTableGestRepEquiposParaReparar2.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane6)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(384, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Equipos entregados", jPanel3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1200, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -528,97 +730,63 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    private void jButtonAltaTareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAltaTareaActionPerformed
-        // TODO add your handling code here:
-        AltaTarea altTarea= new AltaTarea(this,reparacion.getEquipo().getId());
-        altTarea.setVisible(true);
-        this.setVisible(false);
-        
-    }//GEN-LAST:event_jButtonAltaTareaActionPerformed
 
-    private void jTextF1GestionRepBuscarEquiposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposActionPerformed
-        
-        
-    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposActionPerformed
-
-    private void jTextF2FallaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF2FallaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextF2FallaActionPerformed
-
-    private void jTextF1GestionRepBuscarEquiposKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposKeyPressed
-        // TODO add your handling code here:
-        modeloTablaSeleccionarPresupuestos.setRowCount(0);
-        
-        String buscado;
-        buscado=jTextF1GestionRepBuscarEquipos.getText();
-        buscado = buscado.toUpperCase();
-        int i;
-        int fila =0;
-        for (Equipo e : equipos){
-            String buscando;
-            buscando = e.getModelo();
-            buscando=buscando.toUpperCase();
-            
-            if(buscando.contains(buscado)){
-                modeloTablaSeleccionarPresupuestos.addRow(new Object[5]);
-                jTableGestRepEquiposParaReparar.setValueAt(e.getModelo(),fila,0);
-                jTableGestRepEquiposParaReparar.setValueAt(e.getMarca(),fila,1);
-                jTableGestRepEquiposParaReparar.setValueAt(e.getFechaRecepcion(),fila,2);
-                jTableGestRepEquiposParaReparar.setValueAt(e.getEstado(),fila,3);
-                jTableGestRepEquiposParaReparar.setValueAt(e.getId(),fila,4);
-                fila++;
-            }
-            
+    private void jButtonVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVenderActionPerformed
+        if(!factura.isEmpty()){
+            venta.setDetalles(factura);
+            Date fechaHoy = new Date();
+            venta.setFecha(fechaHoy);
+            vc.insertarVenta(venta);
         }
-    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposKeyPressed
+    }//GEN-LAST:event_jButtonVenderActionPerformed
 
-    private void jTableGestRepEquiposParaRepararMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaRepararMouseClicked
-        /* 
-        Integer codigoOrden = Integer.parseInt(String.valueOf(modeloTablaOrdenesPendientes.getValueAt(jTable2_TablaOrdenesPendientes.getSelectedRow(), 0)));
-        System.out.println("Recibi el codigo de la orden numero: " + codigoOrden);
-        modeloTablaAnalisisResultados.setRowCount(0);
-        cargarTablaAnalisisResultado(codigoOrden);
-        */
-        //primero capturo el identificador del presupuesto en la tabla que fue clikeado
-        Integer id= Integer.parseInt(String.valueOf(modeloTablaSeleccionarPresupuestos.getValueAt(jTableGestRepEquiposParaReparar.getSelectedRow(),4)));
-        //con el id debo hacer una consulta y cargar los campos, enviando el presupuesto al view
-        //this.mController.obtenerPresupuesto(idPresupuesto);
-        System.out.println("entro a mouse clicked");
-        jButtonAltaTarea.setEnabled(true);
-        this.mController.obtenerReparacion(id);
-    }//GEN-LAST:event_jTableGestRepEquiposParaRepararMouseClicked
+    private void jButtonQuitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonQuitarActionPerformed
+        if(jTableFactura.getSelectedRow() != -1){
+            int idInsumo = factura.get(jTableFactura.getSelectedRow()).getIdInsumo();
+            int cantidadRequerida = factura.get(jTableFactura.getSelectedRow()).getCantidad();
+            factura.remove(jTableFactura.getSelectedRow());
+            Iterator<Producto> it = productos.iterator();
+            Producto producto = new Producto();
 
-    private void jTableProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableProductosMouseClicked
-        idProducto = (int) jTableProductos.getValueAt(jTableProductos.getSelectedRow(),0);
-    }//GEN-LAST:event_jTableProductosMouseClicked
-
-    private void jTextFieldBuscarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldBuscarProductoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldBuscarProductoActionPerformed
-
-    private void jTextFieldBuscarProductoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldBuscarProductoKeyPressed
-        tablaProductos.setRowCount(0);
-        productos = vc.obtenerTodo();
-
-        String buscar = jTextFieldBuscarProducto.getText();
-        buscar = buscar.toUpperCase();
-        int i;
-        int fila = 0;
-        for (Producto p : productos){
-            String buscando = p.getNombre();
-            buscando=buscando.toUpperCase();
-            buscando = buscando.toUpperCase();
-
-            if(buscando.contains(buscar)){
-                tablaProductos.addRow(new Object[4]);
-                jTableProductos.setValueAt(p.getId(),fila,0);
-                jTableProductos.setValueAt(p.getNombre(),fila,1);
-                jTableProductos.setValueAt(p.getPrecio(),fila,2);
-                jTableProductos.setValueAt(p.getStock(), fila,3);
-                fila++;
+            while(it.hasNext()){
+                //Ver si no se salta el primero
+                producto = it.next();
+                //Ver si modifica el iterator
+                if(producto.getId() == idInsumo){
+                    producto.setStock(producto.getStock() + cantidadRequerida);
+                    break;
+                }
+                else
+                System.out.println("Error Fatal: no lo encontro el prodcuto\n");
             }
+            float total =  Float.parseFloat(jLabelTotal.getText());
+            tablaFactura.setRowCount(0);
+            String nombreInsumo = "Error";
+            int fila=0;
+            for(DetalleVenta dv : factura){
+                tablaFactura.addRow(new Object[3]);
+                for(Producto p: productos){
+                    if(p.getId() == dv.getIdInsumo()){
+                        nombreInsumo = p.getNombre();
+                        break;
+                    }
+                    else
+                    System.out.println("Error Fatal, no se encontro el insumo\n");
+                }
+                jTableFactura.setValueAt(nombreInsumo,fila,0);
+                jTableFactura.setValueAt(dv.getCantidad(), fila,1);
+                jTableFactura.setValueAt(dv.getSubtotal(), fila,2);
+                total -= dv.getSubtotal();
+            }
+            jLabelTotal.setText(String.valueOf(total));
         }
-    }//GEN-LAST:event_jTextFieldBuscarProductoKeyPressed
+    }//GEN-LAST:event_jButtonQuitarActionPerformed
+
+    private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
+        //Hay otra forma de hacerlo sin llamar a la base de datos
+        productos.removeAll(productos);
+        limpiar();
+    }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void jButtonAgregarFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarFacturaActionPerformed
         if(jTableProductos.getSelectedRow() != -1){
@@ -668,82 +836,37 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         }
     }//GEN-LAST:event_jButtonAgregarFacturaActionPerformed
 
-    private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        //Hay otra forma de hacerlo sin llamar a la base de datos
-        productos.removeAll(productos);
-        limpiar();
-    }//GEN-LAST:event_jButtonCancelarActionPerformed
+    private void jTextFieldBuscarProductoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldBuscarProductoKeyPressed
+        tablaProductos.setRowCount(0);
+        productos = vc.obtenerTodo();
 
-    private void jButtonQuitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonQuitarActionPerformed
-        if(jTableFactura.getSelectedRow() != -1){
-            int idInsumo = factura.get(jTableFactura.getSelectedRow()).getIdInsumo();
-            int cantidadRequerida = factura.get(jTableFactura.getSelectedRow()).getCantidad();
-            factura.remove(jTableFactura.getSelectedRow());
-            Iterator<Producto> it = productos.iterator();
-            Producto producto = new Producto();
+        String buscar = jTextFieldBuscarProducto.getText();
+        buscar = buscar.toUpperCase();
+        int i;
+        int fila = 0;
+        for (Producto p : productos){
+            String buscando = p.getNombre();
+            buscando=buscando.toUpperCase();
+            buscando = buscando.toUpperCase();
 
-            while(it.hasNext()){
-                //Ver si no se salta el primero
-                producto = it.next();
-                //Ver si modifica el iterator
-                if(producto.getId() == idInsumo){
-                    producto.setStock(producto.getStock() + cantidadRequerida);
-                    break;
-                }
-                else
-                System.out.println("Error Fatal: no lo encontro el prodcuto\n");
+            if(buscando.contains(buscar)){
+                tablaProductos.addRow(new Object[4]);
+                jTableProductos.setValueAt(p.getId(),fila,0);
+                jTableProductos.setValueAt(p.getNombre(),fila,1);
+                jTableProductos.setValueAt(p.getPrecio(),fila,2);
+                jTableProductos.setValueAt(p.getStock(), fila,3);
+                fila++;
             }
-            float total =  Float.parseFloat(jLabelTotal.getText());
-            tablaFactura.setRowCount(0);
-            String nombreInsumo = "Error";
-            int fila=0;
-            for(DetalleVenta dv : factura){
-                tablaFactura.addRow(new Object[3]);
-                for(Producto p: productos){
-                    if(p.getId() == dv.getIdInsumo()){
-                        nombreInsumo = p.getNombre();
-                        break;
-                    }
-                    else
-                    System.out.println("Error Fatal, no se encontro el insumo\n");
-                }
-                jTableFactura.setValueAt(nombreInsumo,fila,0);
-                jTableFactura.setValueAt(dv.getCantidad(), fila,1);
-                jTableFactura.setValueAt(dv.getSubtotal(), fila,2);
-                total -= dv.getSubtotal();
-            }
-            jLabelTotal.setText(String.valueOf(total));
         }
-    }//GEN-LAST:event_jButtonQuitarActionPerformed
+    }//GEN-LAST:event_jTextFieldBuscarProductoKeyPressed
 
-    private void jButtonVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVenderActionPerformed
-        if(!factura.isEmpty()){
-            venta.setDetalles(factura);
-            Date fechaHoy = new Date();
-            venta.setFecha(fechaHoy);
-            vc.insertarVenta(venta);
-        }
-    }//GEN-LAST:event_jButtonVenderActionPerformed
-
-    private void jTextF1GestionRepBuscarEquiposMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseEntered
-        // TODO add your handling code here
-        jTextF1GestionRepBuscarEquipos.setText("");
-    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseEntered
-
-    private void jTextF1GestionRepBuscarEquiposMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseReleased
+    private void jTextFieldBuscarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldBuscarProductoActionPerformed
         // TODO add your handling code here:
-        
-    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseReleased
+    }//GEN-LAST:event_jTextFieldBuscarProductoActionPerformed
 
-    private void jTextF1GestionRepBuscarEquiposMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseExited
-        // TODO add your handling code here:
-       
-    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseExited
-
-    private void jTextF1GestionRepBuscarEquiposMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseClicked
-        // TODO add your handling code here:
-        jTextF1GestionRepBuscarEquipos.setText("");
-    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseClicked
+    private void jTableProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableProductosMouseClicked
+        idProducto = (int) jTableProductos.getValueAt(jTableProductos.getSelectedRow(),0);
+    }//GEN-LAST:event_jTableProductosMouseClicked
 
     private void jPanel1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel1ComponentShown
         // TODO add your handling code here:
@@ -751,6 +874,94 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             this.mController.obtenerReparacion(reparacion.getId());
         }
     }//GEN-LAST:event_jPanel1ComponentShown
+
+    private void jTextF1GestionRepBuscarEquiposKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposKeyPressed
+        // TODO add your handling code here:
+        modeloTablaSeleccionarPresupuestos.setRowCount(0);
+
+        String buscado;
+        buscado=jTextF1GestionRepBuscarEquipos.getText();
+        buscado = buscado.toUpperCase();
+        int i;
+        int fila =0;
+        for (Equipo e : equipos){
+            String buscando;
+            buscando = e.getModelo();
+            buscando=buscando.toUpperCase();
+
+            if(buscando.contains(buscado)){
+                modeloTablaSeleccionarPresupuestos.addRow(new Object[5]);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getModelo(),fila,0);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getMarca(),fila,1);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getFechaRecepcion(),fila,2);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getEstado(),fila,3);
+                jTableGestRepEquiposParaReparar.setValueAt(e.getId(),fila,4);
+                fila++;
+            }
+
+        }
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposKeyPressed
+
+    private void jTextF1GestionRepBuscarEquiposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposActionPerformed
+
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposActionPerformed
+
+    private void jTextF1GestionRepBuscarEquiposMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseReleased
+
+    private void jTextF1GestionRepBuscarEquiposMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseExited
+
+    private void jTextF1GestionRepBuscarEquiposMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseEntered
+        // TODO add your handling code here
+        jTextF1GestionRepBuscarEquipos.setText("");
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseEntered
+
+    private void jTextF1GestionRepBuscarEquiposMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposMouseClicked
+        // TODO add your handling code here:
+        jTextF1GestionRepBuscarEquipos.setText("");
+    }//GEN-LAST:event_jTextF1GestionRepBuscarEquiposMouseClicked
+
+    private void jTextF2FallaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF2FallaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextF2FallaActionPerformed
+
+    private void jButtonAltaTareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAltaTareaActionPerformed
+        // TODO add your handling code here:
+        AltaTarea altTarea= new AltaTarea(this,reparacion.getEquipo().getId());
+        altTarea.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jButtonAltaTareaActionPerformed
+
+    private void jTableGestRepEquiposParaRepararMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaRepararMouseClicked
+        /*
+        Integer codigoOrden = Integer.parseInt(String.valueOf(modeloTablaOrdenesPendientes.getValueAt(jTable2_TablaOrdenesPendientes.getSelectedRow(), 0)));
+        System.out.println("Recibi el codigo de la orden numero: " + codigoOrden);
+        modeloTablaAnalisisResultados.setRowCount(0);
+        cargarTablaAnalisisResultado(codigoOrden);
+        */
+        //primero capturo el identificador del presupuesto en la tabla que fue clikeado
+        Integer id= Integer.parseInt(String.valueOf(modeloTablaSeleccionarPresupuestos.getValueAt(jTableGestRepEquiposParaReparar.getSelectedRow(),4)));
+        //con el id debo hacer una consulta y cargar los campos, enviando el presupuesto al view
+        //this.mController.obtenerPresupuesto(idPresupuesto);
+        System.out.println("entro a mouse clicked");
+        jButtonAltaTarea.setEnabled(true);
+        this.mController.obtenerReparacion(id);
+    }//GEN-LAST:event_jTableGestRepEquiposParaRepararMouseClicked
+
+    private void jTableGestRepEquiposParaReparar1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaReparar1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTableGestRepEquiposParaReparar1MouseClicked
+
+    private void jTableGestRepEquiposParaReparar2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaReparar2MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTableGestRepEquiposParaReparar2MouseClicked
+
+    private void jTextF2Falla1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF2Falla1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextF2Falla1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -789,14 +1000,20 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAgregarFactura;
-    public javax.swing.JButton jButtonAltaTarea;
+    private javax.swing.JButton jButtonAltaTarea;
     private javax.swing.JButton jButtonCancelar;
-    public javax.swing.JButton jButtonEliminarTarea;
-    public javax.swing.JButton jButtonFinalizarReparacion;
-    public javax.swing.JButton jButtonModificarTarea;
+    private javax.swing.JButton jButtonEliminarTarea;
+    private javax.swing.JButton jButtonFinalizarReparacion;
+    private javax.swing.JButton jButtonModificarTarea;
     private javax.swing.JButton jButtonQuitar;
     private javax.swing.JButton jButtonVender;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -805,9 +1022,12 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    public javax.swing.JLabel jLabelFechaIngreso;
+    private javax.swing.JLabel jLabelFechaIngreso;
+    public javax.swing.JLabel jLabelFechaIngreso1;
     private javax.swing.JLabel jLabelTotal;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanelFactura;
     private javax.swing.JPanel jPanelProductos;
     private javax.swing.JPanel jPanelVenta;
@@ -815,18 +1035,27 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTableFactura;
-    public javax.swing.JTable jTableGestRepEquiposParaReparar;
-    public javax.swing.JTable jTableGestRepListadoTareasSeleccionadas;
-    public javax.swing.JTable jTableProductos;
-    public javax.swing.JTextField jTextF1GestionRepBuscarEquipos;
-    public javax.swing.JTextField jTextF2Falla;
-    public javax.swing.JTextField jTextFMarca;
-    public javax.swing.JTextField jTextFModelo;
-    public javax.swing.JTextField jTextFiEstadoEquipo;
-    public javax.swing.JTextField jTextFiEstadoRecepcionEqui;
-    public javax.swing.JTextField jTextFieldBuscarProducto;
+    private javax.swing.JTable jTableGestRepEquiposParaReparar;
+    public javax.swing.JTable jTableGestRepEquiposParaReparar1;
+    public javax.swing.JTable jTableGestRepEquiposParaReparar2;
+    private javax.swing.JTable jTableGestRepListadoTareasSeleccionadas;
+    private javax.swing.JTable jTableProductos;
+    private javax.swing.JTextField jTextF1GestionRepBuscarEquipos;
+    private javax.swing.JTextField jTextF2Falla;
+    public javax.swing.JTextField jTextF2Falla1;
+    private javax.swing.JTextField jTextFMarca;
+    public javax.swing.JTextField jTextFMarca1;
+    private javax.swing.JTextField jTextFModelo;
+    public javax.swing.JTextField jTextFModelo1;
+    private javax.swing.JTextField jTextFiEstadoEquipo;
+    public javax.swing.JTextField jTextFiEstadoEquipo1;
+    private javax.swing.JTextField jTextFiEstadoRecepcionEqui;
+    public javax.swing.JTextField jTextFiEstadoRecepcionEqui1;
+    private javax.swing.JTextField jTextFieldBuscarProducto;
     // End of variables declaration//GEN-END:variables
 
     @Override
