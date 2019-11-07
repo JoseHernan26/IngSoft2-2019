@@ -5,6 +5,7 @@
  */
 package Vistas;
 
+import Controllers.EquiposController;
 import Main.Funciones;
 import Controllers.GestionarReparacionesController;
 import Interfaces.GestionarReparacionesMVP;
@@ -16,6 +17,7 @@ import Modelos.Reparacion;
 import Modelos.Tarea;
 import Modelos.Venta;
 import Controllers.VentaControler;
+import Interfaces.EquiposMvp;
 import Interfaces.VentaMVC;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,11 +30,14 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Note250
  */
-public class Principal extends javax.swing.JFrame implements GestionarReparacionesMVP.View, VentaMVC.View{
+public class Principal extends javax.swing.JFrame implements GestionarReparacionesMVP.View, VentaMVC.View, EquiposMvp.View{
     public DefaultTableModel modeloTablaSeleccionarPresupuestos;
+    public DefaultTableModel modeloTablaListarEquipos;
     private GestionarReparacionesMVP.Controller mController;
+    private EquiposMvp.Controller equiController;
     private List<Tarea> listTareas;
     private List<Equipo> equipos;
+    private List<Equipo> equipos2;
     private Presupuesto presupuesto;
     private Equipo equipo;
     private Reparacion reparacion;
@@ -60,6 +65,18 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
             model.addRow(nuevoEquipo);
         }
+        // lo necesario para la pestaña equipos
+        
+        equiController= new EquiposController(this);
+        equipos2 =equiController.obtenerEquipos("REPARANDO");
+        DefaultTableModel model2 = (DefaultTableModel) jTableShowEquipos.getModel();
+        model2.setRowCount(0);
+        for(Equipo e : equipos2){
+            Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
+            model2.addRow(nuevoEquipo);
+            System.out.println("dentro del for que deberia cargar  una vez en pricipal");
+        }
+        //
         tablaProductos = (DefaultTableModel) jTableProductos.getModel();
         tablaFactura = (DefaultTableModel) jTableFactura.getModel();
         //jTableProductos.setModel(tablaProductos);
@@ -86,6 +103,8 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         }
         //capturo los modelos de la pestaña gestionar reparaciones
         modeloTablaSeleccionarPresupuestos= (DefaultTableModel) jTableGestRepEquiposParaReparar.getModel();
+        //capturo los modelos de la pestaña equipos
+        modeloTablaListarEquipos= (DefaultTableModel) jTableShowEquipos.getModel();
         
     }
 
@@ -98,6 +117,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup4 = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -137,11 +157,10 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         jLabel6 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabelTotal = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        jPanelEquipos = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jTableGestRepEquiposParaReparar1 = new javax.swing.JTable();
+        jTableShowEquipos = new javax.swing.JTable();
         jTextF2Falla1 = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jTextFModelo1 = new javax.swing.JTextField();
@@ -152,9 +171,11 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         jTextFiEstadoRecepcionEqui1 = new javax.swing.JTextField();
         jTextFiEstadoEquipo1 = new javax.swing.JTextField();
         jLabelFechaIngreso1 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTableGestRepEquiposParaReparar2 = new javax.swing.JTable();
+        jLabel16 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -546,8 +567,10 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
         jTabbedPane1.addTab("Venta", jPanelVenta);
 
-        jTableGestRepEquiposParaReparar1.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
-        jTableGestRepEquiposParaReparar1.setModel(new javax.swing.table.DefaultTableModel(
+        jPanelEquipos.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(51, 0, 204))); // NOI18N
+
+        jTableShowEquipos.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
+        jTableShowEquipos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -570,13 +593,16 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
                 return canEdit [columnIndex];
             }
         });
-        jTableGestRepEquiposParaReparar1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTableShowEquipos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableGestRepEquiposParaReparar1MouseClicked(evt);
+                jTableShowEquiposMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jTableShowEquiposMouseEntered(evt);
             }
         });
-        jScrollPane5.setViewportView(jTableGestRepEquiposParaReparar1);
-        jTableGestRepEquiposParaReparar1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane5.setViewportView(jTableShowEquipos);
+        jTableShowEquipos.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
         jTextF2Falla1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -584,11 +610,15 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             }
         });
 
-        jLabel10.setText("Falla");
-
         jLabel11.setText("Marca");
 
         jLabel12.setText("Modelo");
+
+        jTextFModelo1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFModelo1ActionPerformed(evt);
+            }
+        });
 
         jLabel13.setText("Fecha de Ingreso");
 
@@ -596,124 +626,168 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
         jLabel15.setText("Estado recepcion");
 
+        jTextFiEstadoRecepcionEqui1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFiEstadoRecepcionEqui1ActionPerformed(evt);
+            }
+        });
+
+        jTextFiEstadoEquipo1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFiEstadoEquipo1ActionPerformed(evt);
+            }
+        });
+
         jLabelFechaIngreso1.setText("alguna fecha ");
+
+        jLabel16.setText("Falla");
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Seleccione el tipo de equipo que desea listar\n"));
+
+        buttonGroup4.add(jRadioButton1);
+        jRadioButton1.setText("Pendientes");
+        jRadioButton1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jRadioButton1StateChanged(evt);
+            }
+        });
+        jRadioButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButton1MouseClicked(evt);
+            }
+        });
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
+
+        buttonGroup4.add(jRadioButton2);
+        jRadioButton2.setText("Reparados");
+        jRadioButton2.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jRadioButton2StateChanged(evt);
+            }
+        });
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+
+        buttonGroup4.add(jRadioButton3);
+        jRadioButton3.setText("Entregados");
+        jRadioButton3.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jRadioButton3StateChanged(evt);
+            }
+        });
+        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(24, 24, 24)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(116, 116, 116)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jTextFModelo1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jTextFMarca1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jTextF2Falla1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(163, 163, 163)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jTextFiEstadoEquipo1)
-                        .addComponent(jTextFiEstadoRecepcionEqui1)
-                        .addComponent(jLabelFechaIngreso1, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE))
-                    .addGap(24, 24, 24)))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jRadioButton1)
+                .addGap(143, 143, 143)
+                .addComponent(jRadioButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                .addComponent(jRadioButton3)
+                .addGap(40, 40, 40))
         );
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jRadioButton1, jRadioButton2, jRadioButton3});
+
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(58, 58, 58)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(352, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(204, 204, 204)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextF2Falla1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabelFechaIngreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextFiEstadoEquipo1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextFMarca1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFModelo1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFiEstadoRecepcionEqui1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addContainerGap(205, Short.MAX_VALUE)))
+                .addContainerGap(14, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButton1)
+                    .addComponent(jRadioButton3)
+                    .addComponent(jRadioButton2)))
         );
 
-        jTabbedPane1.addTab("Equipos reparados", jPanel2);
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jRadioButton1, jRadioButton2, jRadioButton3});
 
-        jTableGestRepEquiposParaReparar2.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
-        jTableGestRepEquiposParaReparar2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Modelo", "Marca", "Fecha Ingreso", "Estado", "Id"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jTableGestRepEquiposParaReparar2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableGestRepEquiposParaReparar2MouseClicked(evt);
-            }
-        });
-        jScrollPane6.setViewportView(jTableGestRepEquiposParaReparar2);
-        jTableGestRepEquiposParaReparar2.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane6)
+        javax.swing.GroupLayout jPanelEquiposLayout = new javax.swing.GroupLayout(jPanelEquipos);
+        jPanelEquipos.setLayout(jPanelEquiposLayout);
+        jPanelEquiposLayout.setHorizontalGroup(
+            jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelEquiposLayout.createSequentialGroup()
+                .addGroup(jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelEquiposLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 1171, Short.MAX_VALUE))
+                    .addGroup(jPanelEquiposLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(118, 118, 118)
+                        .addGroup(jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanelEquiposLayout.createSequentialGroup()
+                                .addComponent(jTextFModelo1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanelEquiposLayout.createSequentialGroup()
+                                .addComponent(jTextFMarca1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanelEquiposLayout.createSequentialGroup()
+                                .addComponent(jTextF2Falla1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(163, 163, 163)
+                                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextFiEstadoEquipo1)
+                            .addComponent(jTextFiEstadoRecepcionEqui1)
+                            .addComponent(jLabelFechaIngreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(10, 10, 10)))
                 .addContainerGap())
+            .addGroup(jPanelEquiposLayout.createSequentialGroup()
+                .addGap(291, 291, 291)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(384, Short.MAX_VALUE))
+        jPanelEquiposLayout.setVerticalGroup(
+            jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelEquiposLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextF2Falla1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelFechaIngreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFiEstadoEquipo1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFMarca1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextFModelo1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanelEquiposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextFiEstadoRecepcionEqui1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(52, 52, 52))
         );
 
-        jTabbedPane1.addTab("Equipos entregados", jPanel3);
+        jTabbedPane1.addTab("Equipos ", jPanelEquipos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -730,6 +804,15 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTextF2Falla1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF2Falla1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextF2Falla1ActionPerformed
+
+    private void jTableShowEquiposMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableShowEquiposMouseClicked
+        Integer id= Integer.parseInt(String.valueOf(modeloTablaListarEquipos.getValueAt(jTableShowEquipos.getSelectedRow(),4)));
+        this.equiController.obtenerReparacion(id);
+    }//GEN-LAST:event_jTableShowEquiposMouseClicked
 
     private void jButtonVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVenderActionPerformed
         if(!factura.isEmpty()){
@@ -936,32 +1019,91 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     }//GEN-LAST:event_jButtonAltaTareaActionPerformed
 
     private void jTableGestRepEquiposParaRepararMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaRepararMouseClicked
-        /*
-        Integer codigoOrden = Integer.parseInt(String.valueOf(modeloTablaOrdenesPendientes.getValueAt(jTable2_TablaOrdenesPendientes.getSelectedRow(), 0)));
-        System.out.println("Recibi el codigo de la orden numero: " + codigoOrden);
-        modeloTablaAnalisisResultados.setRowCount(0);
-        cargarTablaAnalisisResultado(codigoOrden);
-        */
+        
         //primero capturo el identificador del presupuesto en la tabla que fue clikeado
         Integer id= Integer.parseInt(String.valueOf(modeloTablaSeleccionarPresupuestos.getValueAt(jTableGestRepEquiposParaReparar.getSelectedRow(),4)));
         //con el id debo hacer una consulta y cargar los campos, enviando el presupuesto al view
         //this.mController.obtenerPresupuesto(idPresupuesto);
-        System.out.println("entro a mouse clicked");
+        
         jButtonAltaTarea.setEnabled(true);
         this.mController.obtenerReparacion(id);
     }//GEN-LAST:event_jTableGestRepEquiposParaRepararMouseClicked
 
-    private void jTableGestRepEquiposParaReparar1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaReparar1MouseClicked
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTableGestRepEquiposParaReparar1MouseClicked
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
 
-    private void jTableGestRepEquiposParaReparar2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaReparar2MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTableGestRepEquiposParaReparar2MouseClicked
+    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
+      /***  modeloTablaListarEquipos.setRowCount(0);
+    equipos2 =equiController.obtenerEquipos("ENTREGADOS");
+    DefaultTableModel model2 = (DefaultTableModel) jTableShowEquipos.getModel();
+    model2.setRowCount(0);
+    for(Equipo e : equipos2){
+          Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
+          model2.addRow(nuevoEquipo);
+        
+          **/
+    }//GEN-LAST:event_jRadioButton3ActionPerformed
 
-    private void jTextF2Falla1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF2Falla1ActionPerformed
+    private void jRadioButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButton1MouseClicked
+        //equiController
+    }//GEN-LAST:event_jRadioButton1MouseClicked
+
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextF2Falla1ActionPerformed
+    }//GEN-LAST:event_jRadioButton1ActionPerformed
+
+    private void jRadioButton1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jRadioButton1StateChanged
+
+        modeloTablaListarEquipos.setRowCount(0);
+        equipos2 =equiController.obtenerEquipos("PENDIENTE");
+        DefaultTableModel model2 = (DefaultTableModel) jTableShowEquipos.getModel();
+        model2.setRowCount(0);
+        for(Equipo e : equipos2){
+            Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
+            model2.addRow(nuevoEquipo);
+        }
+    }//GEN-LAST:event_jRadioButton1StateChanged
+
+    private void jRadioButton2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jRadioButton2StateChanged
+        modeloTablaListarEquipos.setRowCount(0);
+        equipos2 =equiController.obtenerEquipos("REPARANDO");
+        DefaultTableModel model2 = (DefaultTableModel) jTableShowEquipos.getModel();
+        model2.setRowCount(0);
+        for(Equipo e : equipos2){
+            Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
+            model2.addRow(nuevoEquipo);
+        }
+
+    }//GEN-LAST:event_jRadioButton2StateChanged
+
+    private void jRadioButton3StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jRadioButton3StateChanged
+        modeloTablaListarEquipos.setRowCount(0);
+        equipos2 =equiController.obtenerEquipos("ENTREGADO");
+        DefaultTableModel model2 = (DefaultTableModel) jTableShowEquipos.getModel();
+        model2.setRowCount(0);
+        for(Equipo e : equipos2){
+            Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
+            model2.addRow(nuevoEquipo);
+        }
+
+    }//GEN-LAST:event_jRadioButton3StateChanged
+
+    private void jTableShowEquiposMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableShowEquiposMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTableShowEquiposMouseEntered
+
+    private void jTextFModelo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFModelo1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFModelo1ActionPerformed
+
+    private void jTextFiEstadoEquipo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFiEstadoEquipo1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFiEstadoEquipo1ActionPerformed
+
+    private void jTextFiEstadoRecepcionEqui1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFiEstadoRecepcionEqui1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFiEstadoRecepcionEqui1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -999,21 +1141,22 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup4;
     private javax.swing.JButton jButtonAgregarFactura;
-    private javax.swing.JButton jButtonAltaTarea;
+    public javax.swing.JButton jButtonAltaTarea;
     private javax.swing.JButton jButtonCancelar;
-    private javax.swing.JButton jButtonEliminarTarea;
-    private javax.swing.JButton jButtonFinalizarReparacion;
-    private javax.swing.JButton jButtonModificarTarea;
+    public javax.swing.JButton jButtonEliminarTarea;
+    public javax.swing.JButton jButtonFinalizarReparacion;
+    public javax.swing.JButton jButtonModificarTarea;
     private javax.swing.JButton jButtonQuitar;
     private javax.swing.JButton jButtonVender;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1022,42 +1165,77 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JLabel jLabelFechaIngreso;
+    public javax.swing.JLabel jLabelFechaIngreso;
     public javax.swing.JLabel jLabelFechaIngreso1;
     private javax.swing.JLabel jLabelTotal;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanelEquipos;
     private javax.swing.JPanel jPanelFactura;
     private javax.swing.JPanel jPanelProductos;
     private javax.swing.JPanel jPanelVenta;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTableFactura;
-    private javax.swing.JTable jTableGestRepEquiposParaReparar;
-    public javax.swing.JTable jTableGestRepEquiposParaReparar1;
-    public javax.swing.JTable jTableGestRepEquiposParaReparar2;
-    private javax.swing.JTable jTableGestRepListadoTareasSeleccionadas;
-    private javax.swing.JTable jTableProductos;
-    private javax.swing.JTextField jTextF1GestionRepBuscarEquipos;
-    private javax.swing.JTextField jTextF2Falla;
+    public javax.swing.JTable jTableGestRepEquiposParaReparar;
+    public javax.swing.JTable jTableGestRepListadoTareasSeleccionadas;
+    public javax.swing.JTable jTableProductos;
+    public javax.swing.JTable jTableShowEquipos;
+    public javax.swing.JTextField jTextF1GestionRepBuscarEquipos;
+    public javax.swing.JTextField jTextF2Falla;
     public javax.swing.JTextField jTextF2Falla1;
-    private javax.swing.JTextField jTextFMarca;
+    public javax.swing.JTextField jTextFMarca;
     public javax.swing.JTextField jTextFMarca1;
-    private javax.swing.JTextField jTextFModelo;
+    public javax.swing.JTextField jTextFModelo;
     public javax.swing.JTextField jTextFModelo1;
-    private javax.swing.JTextField jTextFiEstadoEquipo;
+    public javax.swing.JTextField jTextFiEstadoEquipo;
     public javax.swing.JTextField jTextFiEstadoEquipo1;
-    private javax.swing.JTextField jTextFiEstadoRecepcionEqui;
+    public javax.swing.JTextField jTextFiEstadoRecepcionEqui;
     public javax.swing.JTextField jTextFiEstadoRecepcionEqui1;
-    private javax.swing.JTextField jTextFieldBuscarProducto;
+    public javax.swing.JTextField jTextFieldBuscarProducto;
     // End of variables declaration//GEN-END:variables
+ 
+        
+    // necesarios para pestaña equipos-----------------     
+        
+     @Override
+    public void mostrarTablaEquiListadoTareasSeleccionadas(Reparacion reparacion){
+        
+    }
+    @Override
+    public void mostrarTablaEquipos(List presupuestos){
+        
+    }
+     public void obtenerDetallesEquipo(Equipo e){
+        jTextF2Falla1.setText(e.getMotivoFalla());
 
+        jTextFiEstadoEquipo1.setText(String.valueOf(e.getEstado()));
+        
+        jTextFMarca1.setText(e.getMarca());
+        jTextFModelo1.setText(e.getModelo());
+        
+        
+        jTextFiEstadoRecepcionEqui1.setText(e.getDetallesIngreso());
+        jLabelFechaIngreso1.setText(Funciones.dateFormat(e.getFechaRecepcion()));
+     }
+    /**
+     * Quizas tmb deba implementar esto aparte
+     * 
+    @Override
+    public void mostrarCamposReparacion(Reparacion reparacion){
+      
+    }
+    **/
+    
+    //-------------------------------------------------
+        
     @Override
     public void mostrarTablaGestRepEquiposParaReparar(List presupuestos) {
       
@@ -1067,7 +1245,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     public void mostrarTablaGestRepListadoTareasSeleccionadas(Reparacion reparacion) {
         
     }
-
+    
     @Override
     public void mostrarCamposReparacion(Reparacion reparacion) {
         this.reparacion = reparacion;
