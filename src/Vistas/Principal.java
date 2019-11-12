@@ -52,6 +52,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     /**
      * Creates new form Principal
      */
+    
     public Principal(int tipo) {
         initComponents();
         this.setLocationRelativeTo(null);
