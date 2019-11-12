@@ -15,7 +15,7 @@ public class Venta {
     private int id;
     private int idEmpleado;
     private int idCliente;
-    private Date fecha;
+    private String fecha;
     private List<DetalleVenta> detalles;
     private float total;
 
@@ -38,7 +38,7 @@ public class Venta {
     public Venta(){
     }
     
-    public Venta(int idEmpleado, int idCliente, Date fecha, List<DetalleVenta> detalles, float total) {
+    public Venta(int idEmpleado, int idCliente, String fecha, List<DetalleVenta> detalles, float total) {
         this.idEmpleado = idEmpleado;
         this.idCliente = idCliente;
         this.fecha = fecha;
@@ -55,11 +55,11 @@ public class Venta {
         this.id = id;
     }
 
-    public Date getFecha() {
+    public String getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 

@@ -10,6 +10,7 @@ import Modelos.DetalleVenta;
 import Modelos.Producto;
 import Modelos.Venta;
 import Interfaces.VentaMVC;
+import Modelos.tipoProd;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class VentaDAO implements VentaMVC.DAO{
         }catch(Exception ex){
             ex.printStackTrace();
         }
-        return (ArrayList<Producto>) list; 
+        return (ArrayList<Producto>) list;
     }
 
     @Override
