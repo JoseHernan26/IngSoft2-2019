@@ -5,37 +5,25 @@
  */
 package ingenieriasoft2proyecto.Modelos;
 
-import java.util.Date;
-
-
 /**
  *
  * @author Note250
  */
-enum tipoProd{
-    INSUMO,
-    REPUESTO,
-}
 public class Producto {
     private int id;
-    private int idProveedor;
-    private int stock;
+    private int cantidad;
     private float precio;
     private String nombre;
     private int garantia;
-    private tipoProd tipo;
+    private int tipo;
 
-    public Producto(int id, int idProveedor, int stock, float precio, String nombre, int garantia, tipoProd tipo) {
+    public Producto(int id, int cantidad, float precio, String nombre, int garantia, int tipo) {
         this.id = id;
-        this.idProveedor = idProveedor;
-        this.stock = stock;
+        this.cantidad = cantidad;
         this.precio = precio;
         this.nombre = nombre;
         this.garantia = garantia;
         this.tipo = tipo;
-    }
-
-    public Producto() {
     }
 
     public int getId() {
@@ -46,29 +34,32 @@ public class Producto {
         this.id = id;
     }
 
-    public int getStock() {
-        return stock;
+    public int getCantidad() {
+        return cantidad;
     }
 
-    public int getIdProveedor() {
-        return idProveedor;
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 
-    public void setIdProveedor(int idProveedor) {
-        this.idProveedor = idProveedor;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    public tipoProd getTipo() {
+    public int getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipoProd.valueOf(tipo);
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
     }
+    
+    
+    
+    public int getStock() {
+        return cantidad;
+    }
+
+    public void setStock(int stock) {
+        this.cantidad = stock;
+    }
+
     public float getPrecio() {
         return precio;
     }

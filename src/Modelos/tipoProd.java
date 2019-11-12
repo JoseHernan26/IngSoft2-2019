@@ -3,18 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ingenieriasoft2proyecto;
+package Modelos;
 
 /**
  *
  * @author Note250
  */
-public class ControllerLogin {
-    
-    public static boolean ValidaForm(String user,String pass){
-        
-        
-        return true;
-        
-    }
+public enum tipoProd {
+    INSUMO,
+    REPUESTO,
 }

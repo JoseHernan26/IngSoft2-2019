@@ -9,12 +9,12 @@ package ingenieriasoft2proyecto;
  *
  * @author Note250
  */
-public class ControllerLogin {
-    
-    public static boolean ValidaForm(String user,String pass){
-        
-        
-        return true;
-        
+public class FuncionesDeControl {
+    private boolean controlText(String text){
+        if(text.length() == 0 || text.equals(" ")){
+            return false;
+        }else{
+            return true;
+        }
     }
 }

@@ -3,25 +3,38 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ingenieriasoft2proyecto.Modelos;
+package Modelos;
 
 /**
  *
  * @author Note250
  */
-public class detalleVenta {
+public class DetalleVenta {
     private int id;
     private int cantidad;
     private int idInsumo;
+    private int idVenta;
+
+    public int getIdVenta() {
+        return idVenta;
+    }
+
+    public void setIdVenta(int idVenta) {
+        this.idVenta = idVenta;
+    }
     private float subtotal;
 
-    public detalleVenta(int id, int cantidad, int idInsumo, float subtotal) {
+    public DetalleVenta(int id, int cantidad, int idInsumo,int idVenta, float subtotal) {
         this.id = id;
         this.cantidad = cantidad;
         this.idInsumo = idInsumo;
         this.subtotal = subtotal;
+        this.idVenta = idVenta;
     }
-
+    
+    public DetalleVenta(){
+    }
+    
     public int getId() {
         return id;
     }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ingenieriasoft2proyecto.Modelos;
+package Modelos;
 
 /**
  *
@@ -12,16 +12,20 @@ package ingenieriasoft2proyecto.Modelos;
 public class Cliente {
     private int id;
     private String nombre;
-    private int telefono;
-    private char correo;
-    private char tipo;
+    private String telefono;
+    private String correo;
 
-    public Cliente(int id, String nombre, int telefono, char correo, char tipo) {
+    public Cliente(int id, String nombre, String telefono, String correo) {
         this.id = id;
         this.nombre = nombre;
         this.telefono = telefono;
         this.correo = correo;
-        this.tipo = tipo;
+    }
+
+    public Cliente() {
+        this.nombre = "";
+        this.telefono = "";
+        this.correo = "";
     }
 
     public int getId() {
@@ -40,28 +44,20 @@ public class Cliente {
         this.nombre = nombre;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
-    public char getCorreo() {
+    public String getCorreo() {
         return correo;
     }
 
-    public void setCorreo(char correo) {
+    public void setCorreo(String correo) {
         this.correo = correo;
-    }
-
-    public char getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(char tipo) {
-        this.tipo = tipo;
     }
 
   

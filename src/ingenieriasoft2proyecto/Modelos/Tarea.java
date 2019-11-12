@@ -10,7 +10,6 @@ import java.util.List;
 /**
  *
  * @author Note250
- * Clase Tarea con sus atributos y metodos basicos
  */
 public class Tarea {
     private int id;
@@ -20,18 +19,6 @@ public class Tarea {
     private float valorServicio;
     private float subTotal;
     private List<Producto> insumos;
-
-    public Tarea() {
-        //GENERAR ID PROPIO
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public Tarea(int id, int garantia, String nombre, String descripcion, float valorServicio, float subTotal, List<Producto> insumos) {
         this.id = id;
