@@ -10,7 +10,6 @@ import Modelos.Producto;
 import Modelos.Tarea;
 import Interfaces.TareasMvp;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

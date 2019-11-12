@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 package Modelos;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -14,26 +16,23 @@ import java.util.List;
 public class Presupuesto {
     private int id;
     private int idEmpleado;
-    private Equipo idEquipo;
+    private int idEquipo;
     private Date fechaEmision;
-    private float costoServicio;
-    private String listaTareas;
-    private float precio;
-    private List<Producto> insumos;
+    private List<String> listaTareas;
+    private float precioFinal;
+    private HashMap<String,Integer> insumos;
 
-    public Presupuesto(int id, int idEmpleado, Equipo idEquipo, Date fechaEmision, float costoServicio, String listaTareas, float precio, List<Producto> insumos) {
+    public Presupuesto(int id, int idEmpleado, int idEquipo, Date fechaEmision, float precioFinal) {
         this.id = id;
         this.idEmpleado = idEmpleado;
         this.idEquipo = idEquipo;
         this.fechaEmision = fechaEmision;
-        this.costoServicio = costoServicio;
-        this.listaTareas = listaTareas;
-        this.precio = precio;
-        this.insumos = insumos;
+        this.precioFinal = precioFinal;
     }
 
     public Presupuesto() {
-        
+        listaTareas = new ArrayList<>();
+        insumos = new HashMap<>();
     }
     
     public int getIdEmpleado() {
@@ -44,11 +43,11 @@ public class Presupuesto {
         this.idEmpleado = idEmpleado;
     }
 
-    public Equipo getIdEquipo() {
+    public int getIdEquipo() {
         return idEquipo;
     }
 
-    public void setIdEquipo(Equipo idEquipo) {
+    public void setIdEquipo(int idEquipo) {
         this.idEquipo = idEquipo;
     }
 
@@ -69,34 +68,26 @@ public class Presupuesto {
     }
 
     public float getCostoServicio() {
-        return costoServicio;
+        return precioFinal;
     }
 
-    public void setCostoServicio(float costoServicio) {
-        this.costoServicio = costoServicio;
+    public void setCostoServicio(float precioFinal) {
+        this.precioFinal = precioFinal;
     }
 
-    public String getListaTareas() {
+    public List<String> getListaTareas() {
         return listaTareas;
     }
 
-    public void setListaTareas(String listaTareas) {
+    public void setListaTareas(List<String> listaTareas) {
         this.listaTareas = listaTareas;
     }
 
-    public float getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(float precio) {
-        this.precio = precio;
-    }
-
-    public List<Producto> getInsumos() {
+    public HashMap<String,Integer> getInsumos() {
         return insumos;
     }
 
-    public void setInsumos(List<Producto> insumos) {
+    public void setInsumos(HashMap<String,Integer> insumos) {
         this.insumos = insumos;
     }
 

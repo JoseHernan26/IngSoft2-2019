@@ -44,9 +44,9 @@ public class ControllerLogin implements LoginMvp.Controller {
             }
             case 1:{
                 Principal p;
-                if(User.getInstance().getTipoEmpleado().equals("Administracion")){
+                if(User.getInstance().getTipoEmpleado().equals("ADMINISTRADOR")){
                     p = new Principal(1);
-                }else if(User.getInstance().getTipoEmpleado().equals("Tecnico")){
+                }else if(User.getInstance().getTipoEmpleado().equals("TECNICO")){
                     p = new Principal(2);
                 }else{
                     p = new Principal(3);
