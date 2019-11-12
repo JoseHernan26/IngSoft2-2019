@@ -6,6 +6,7 @@
 package Main;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -14,6 +15,7 @@ import java.util.Locale;
  * @author Note250
  */
 public class Funciones {
+    static SimpleDateFormat plantilla = new SimpleDateFormat("yyyy-mm-dd");
     public static boolean compareStrings(String s1, String s2){
         s1 = s1.toLowerCase();
         s2 = s2.toLowerCase();
@@ -29,9 +31,9 @@ public class Funciones {
         }
     }
     public static String dateFormat(Date date){
-        Locale locale = new Locale("us", "US");
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
-        return dateFormat.format(date);
+        //Locale locale = new Locale("us", "US");
+        //DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+        return plantilla.format(date);
     }
     public static Float redondeo2Deci(Float f){
         return  Float.parseFloat(String.format(Locale.US,"%.2f",f));

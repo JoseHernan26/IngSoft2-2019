@@ -10,8 +10,6 @@ import Modelos.Producto;
 import Modelos.Tarea;
 import Controllers.TareasController;
 import Interfaces.TareasMvp;
-import Modelos.Reparacion;
-import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -22,6 +20,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -59,8 +58,6 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jSplitPane1 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         agregar_tarea = new javax.swing.JButton();
@@ -88,17 +85,6 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         jLabel2 = new javax.swing.JLabel();
         agregar_repuesto = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -188,7 +174,6 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         descripcion_tarea.setColumns(20);
         descripcion_tarea.setRows(5);
         jScrollPane3.setViewportView(descripcion_tarea);
-
 
         jLabel8.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel8.setText("Garantia: (en meses)");
@@ -303,6 +288,7 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+
         tabla_repuestos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -570,13 +556,11 @@ public class AltaTarea extends javax.swing.JFrame implements TareasMvp.View{
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextField nombre_tarea;
     private javax.swing.JTextField precio_tarea;
     private javax.swing.JTable repuestos_tarea;

@@ -5,8 +5,8 @@
  */
 package Vistas;
 
-import Main.Funciones;
 import Controllers.GestionarReparacionesController;
+import Controllers.PresupuestoController;
 import Interfaces.GestionarReparacionesMVP;
 import Modelos.DetalleVenta;
 import Modelos.Equipo;
@@ -16,20 +16,29 @@ import Modelos.Reparacion;
 import Modelos.Tarea;
 import Modelos.Venta;
 import Controllers.VentaControler;
+import Interfaces.PresupuestoMvp;
 import Interfaces.VentaMVC;
+import Main.Funciones;
+import Modelos.Cliente;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.border.Border;
+import java.awt.Color;
 
 /**
  *
  * @author Note250
  */
-public class Principal extends javax.swing.JFrame implements GestionarReparacionesMVP.View, VentaMVC.View{
+public class Principal extends javax.swing.JFrame implements GestionarReparacionesMVP.View, VentaMVC.View,PresupuestoMvp.View{
     public DefaultTableModel modeloTablaSeleccionarPresupuestos;
     private GestionarReparacionesMVP.Controller mController;
     private List<Tarea> listTareas;
@@ -37,16 +46,25 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     private Presupuesto presupuesto;
     private Equipo equipo;
     private Reparacion reparacion;
-    
-    //Para la pestaña Venta
-    private VentaMVC.Controler ventaControler;
-    private DefaultTableModel tablaInsumos;
-    private DefaultTableModel tablaFactura;
-    private List<Producto> insumos;
-    private int idInsumo;
-    private List<DetalleVenta> factura;
-    private DetalleVenta detalleVenta;
-    private Venta nuevaVenta;
+    public DefaultTableModel tablaProductos;
+    public DefaultTableModel tablaFactura;
+    ArrayList<Producto> productos;
+    ArrayList<DetalleVenta> factura;
+    int idProducto;
+    DetalleVenta detalleVenta;
+    private VentaMVC.Controler vc;
+    Venta venta;
+    //--VARIABLES PRESUPUESTO
+    private Border rojo = BorderFactory.createLineBorder(Color.RED, 1);
+    private Border negro = BorderFactory.createLineBorder(Color.BLACK, 1);
+    private HashMap<String,Equipo> equiposAsociados;
+    private PresupuestoMvp.Controller presupuestoController;
+    private int idEquipo;
+    private Equipo equipo_Presu;
+    private HashMap<String,Integer> repuestosPresu = new HashMap<>();
+    private List<String> tareasPresu = new ArrayList<>();
+    int idCliente = 0;
+    //--
     /**
      * Creates new form Principal
      */
@@ -63,17 +81,14 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             Object[] nuevoEquipo = {e.getModelo(),e.getMarca(),e.getFechaRecepcion(),e.getEstado(),e.getId()};
             model.addRow(nuevoEquipo);
         }
-        
-        //Para la pestaña Venta
-        ventaControler = new VentaControler(this);
-        tablaInsumos = (DefaultTableModel) jTableInsumos.getModel();
+        tablaProductos = (DefaultTableModel) jTableProductos.getModel();
         tablaFactura = (DefaultTableModel) jTableFactura.getModel();
-        insumos = ventaControler.obtenerTodo();
-        factura = new ArrayList<DetalleVenta>();
-        detalleVenta = new DetalleVenta();
-        nuevaVenta = new Venta();
-        jSpinFieldCantidadRequerida.setMaximum(1);
-        reset();
+        //jTableProductos.setModel(tablaProductos);
+        productos = new ArrayList<>();
+        factura = new ArrayList<>();
+        vc = new VentaControler(this);
+        venta = new Venta();
+        limpiar();
         switch(tipo){
             case 1:
             {
@@ -82,17 +97,20 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             }
             case 2:
             {
-                jTabbedPane1.remove(1);
+                JtabbedPane.remove(1);
                 break;
             }
             case 3:
             {
-                jTabbedPane1.remove(0);
+                System.out.println("hola");
+                JtabbedPane.remove(0);
+                break;
             }
         }
         //capturo los modelos de la pestaña gestionar reparaciones
         modeloTablaSeleccionarPresupuestos= (DefaultTableModel) jTableGestRepEquiposParaReparar.getModel();
-        
+        //----------------------- la parte del presu
+        presupuestoController = new PresupuestoController(this);
     }
 
     /**
@@ -104,8 +122,37 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        AñadirRepuesto = new javax.swing.JDialog();
+        jLabel22 = new javax.swing.JLabel();
+        buscador_tarea = new javax.swing.JTextField();
+        jLabel25 = new javax.swing.JLabel();
+        jScrollPane9 = new javax.swing.JScrollPane();
+        tabla_buscadorRepuestos = new javax.swing.JTable();
+        jLabel31 = new javax.swing.JLabel();
+        cantidad_repuesto = new javax.swing.JTextField();
+        agregar_repuesto1 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        AñadirTarea = new javax.swing.JDialog();
+        jScrollPane12 = new javax.swing.JScrollPane();
+        tabla_buscadorTareas = new javax.swing.JTable();
+        agregar_tarea = new javax.swing.JButton();
+        buscador_tarea1 = new javax.swing.JTextField();
+        jLabel32 = new javax.swing.JLabel();
+        jLabel33 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
+        nuevoCliente = new javax.swing.JDialog();
         jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel34 = new javax.swing.JLabel();
+        jLabel35 = new javax.swing.JLabel();
+        jLabel36 = new javax.swing.JLabel();
+        nombre_clienteNuevo = new javax.swing.JTextField();
+        telefono_clienteNuevo = new javax.swing.JTextField();
+        correo_clienteNuevo = new javax.swing.JTextField();
+        JtabbedPane = new javax.swing.JTabbedPane();
+        gestionarReparaciones = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableGestRepEquiposParaReparar = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
@@ -129,50 +176,407 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         jTextFModelo = new javax.swing.JTextField();
         jTextF1GestionRepBuscarEquipos = new javax.swing.JTextField();
         jPanelVenta = new javax.swing.JPanel();
-        jPanelInsumos = new javax.swing.JPanel();
-        jTextFieldBuscarInsumos = new javax.swing.JTextField();
+        jPanelProductos = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTableInsumos = new javax.swing.JTable();
-        jLabel17 = new javax.swing.JLabel();
-        jSpinFieldCantidadRequerida = new com.toedter.components.JSpinField();
+        jTableProductos = new javax.swing.JTable();
+        jTextFieldBuscarProducto = new javax.swing.JTextField();
         jButtonAgregarFactura = new javax.swing.JButton();
-        jLabel16 = new javax.swing.JLabel();
         jPanelFactura = new javax.swing.JPanel();
-        jButtonCancelarVenta = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTableFactura = new javax.swing.JTable();
+        jButtonCancelar = new javax.swing.JButton();
         jButtonQuitar = new javax.swing.JButton();
+        jButtonVender = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabelTotal = new javax.swing.JLabel();
-        jButtonVender = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jTableGestRepEquiposParaReparar1 = new javax.swing.JTable();
-        jTextF2Falla1 = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jTextFModelo1 = new javax.swing.JTextField();
-        jTextFMarca1 = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jTextFiEstadoRecepcionEqui1 = new javax.swing.JTextField();
-        jTextFiEstadoEquipo1 = new javax.swing.JTextField();
-        jLabelFechaIngreso1 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTableGestRepEquiposParaReparar2 = new javax.swing.JTable();
+        crearPresupuesto = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        tabla_clientes = new javax.swing.JTable();
+        buscador_Cliente = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        agregar_repuesto = new javax.swing.JButton();
+        jLabel17 = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
+        equipos_Asociados = new javax.swing.JComboBox<>();
+        jLabel26 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        nombre_cliente = new javax.swing.JLabel();
+        marca_celular = new javax.swing.JTextField();
+        motivo_celular = new javax.swing.JTextField();
+        modelo_celular = new javax.swing.JTextField();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        detalles_celular = new javax.swing.JTextArea();
+        guardarCambios_celular = new javax.swing.JButton();
+        new_celular = new javax.swing.JCheckBox();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel28 = new javax.swing.JLabel();
+        fechaActual = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        agregar_presupuesto = new javax.swing.JButton();
+        total_presu = new javax.swing.JLabel();
+        agregar_repuesto_presu = new javax.swing.JButton();
+        jScrollPane10 = new javax.swing.JScrollPane();
+        tabla_tareasPresu = new javax.swing.JTable();
+        jLabel29 = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
+        jScrollPane11 = new javax.swing.JScrollPane();
+        tabla_repuestosPresu = new javax.swing.JTable();
+        agregar_tarea_presu = new javax.swing.JButton();
+
+        AñadirRepuesto.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        AñadirRepuesto.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel22.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel22.setText("Buscador repuestos");
+
+        buscador_tarea.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                buscador_tareaCaretUpdate(evt);
+            }
+        });
+
+        jLabel25.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel25.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        jLabel25.setText("Lista de repuestos disponibles:");
+
+        tabla_buscadorRepuestos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre", "Garantia", "Stock", "Precio"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tabla_buscadorRepuestos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabla_buscadorRepuestosMouseClicked(evt);
+            }
+        });
+        jScrollPane9.setViewportView(tabla_buscadorRepuestos);
+
+        jLabel31.setText("Cantidad: ");
+
+        cantidad_repuesto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                cantidad_repuestoKeyTyped(evt);
+            }
+        });
+
+        agregar_repuesto1.setFont(new java.awt.Font("Trebuchet MS", 0, 11)); // NOI18N
+        agregar_repuesto1.setText("Agregar repuesto");
+        agregar_repuesto1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregar_repuesto1ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Cancelar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout AñadirRepuestoLayout = new javax.swing.GroupLayout(AñadirRepuesto.getContentPane());
+        AñadirRepuesto.getContentPane().setLayout(AñadirRepuestoLayout);
+        AñadirRepuestoLayout.setHorizontalGroup(
+            AñadirRepuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(AñadirRepuestoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(AñadirRepuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                    .addComponent(buscador_tarea)
+                    .addGroup(AñadirRepuestoLayout.createSequentialGroup()
+                        .addGroup(AñadirRepuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel22)
+                            .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AñadirRepuestoLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel31)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cantidad_repuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AñadirRepuestoLayout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(agregar_repuesto1)))
+                .addContainerGap())
+        );
+
+        AñadirRepuestoLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {agregar_repuesto1, jButton3});
+
+        AñadirRepuestoLayout.setVerticalGroup(
+            AñadirRepuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AñadirRepuestoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel22)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buscador_tarea, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(3, 3, 3)
+                .addComponent(jLabel25)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(AñadirRepuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel31)
+                    .addComponent(cantidad_repuesto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AñadirRepuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(agregar_repuesto1)
+                    .addComponent(jButton3))
+                .addContainerGap())
+        );
+
+        AñadirRepuestoLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {agregar_repuesto1, jButton3});
+
+        AñadirTarea.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        AñadirTarea.setBackground(new java.awt.Color(255, 255, 255));
+        AñadirTarea.setMinimumSize(new java.awt.Dimension(400, 492));
+
+        tabla_buscadorTareas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre", "Garantia", "Valor de Servicio"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tabla_buscadorTareas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabla_buscadorTareasMouseClicked(evt);
+            }
+        });
+        jScrollPane12.setViewportView(tabla_buscadorTareas);
+
+        agregar_tarea.setFont(new java.awt.Font("Trebuchet MS", 0, 11)); // NOI18N
+        agregar_tarea.setText("Agregar tarea");
+        agregar_tarea.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregar_tareaActionPerformed(evt);
+            }
+        });
+
+        buscador_tarea1.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                buscador_tarea1CaretUpdate(evt);
+            }
+        });
+        buscador_tarea1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscador_tarea1ActionPerformed(evt);
+            }
+        });
+
+        jLabel32.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel32.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        jLabel32.setText("Lista de repuestos disponibles:");
+
+        jLabel33.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel33.setText("Buscador tareas");
+
+        jButton4.setText("Cancelar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout AñadirTareaLayout = new javax.swing.GroupLayout(AñadirTarea.getContentPane());
+        AñadirTarea.getContentPane().setLayout(AñadirTareaLayout);
+        AñadirTareaLayout.setHorizontalGroup(
+            AñadirTareaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(AñadirTareaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton4)
+                .addContainerGap(287, Short.MAX_VALUE))
+            .addGroup(AñadirTareaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(AñadirTareaLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(AñadirTareaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(buscador_tarea1)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AñadirTareaLayout.createSequentialGroup()
+                            .addGap(259, 259, 259)
+                            .addComponent(agregar_tarea))
+                        .addGroup(AñadirTareaLayout.createSequentialGroup()
+                            .addGroup(AñadirTareaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel33)
+                                .addComponent(jLabel32, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(0, 0, Short.MAX_VALUE)))
+                    .addContainerGap()))
+        );
+
+        AñadirTareaLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {agregar_tarea, jButton4});
+
+        AñadirTareaLayout.setVerticalGroup(
+            AñadirTareaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AñadirTareaLayout.createSequentialGroup()
+                .addContainerGap(458, Short.MAX_VALUE)
+                .addComponent(jButton4)
+                .addContainerGap())
+            .addGroup(AñadirTareaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(AñadirTareaLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel33)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(buscador_tarea1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(3, 3, 3)
+                    .addComponent(jLabel32)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                    .addComponent(agregar_tarea)
+                    .addContainerGap()))
+        );
+
+        AñadirTareaLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {agregar_tarea, jButton4});
+
+        nuevoCliente.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        nuevoCliente.setBackground(new java.awt.Color(255, 255, 255));
+        nuevoCliente.setMinimumSize(new java.awt.Dimension(460, 257));
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jButton1.setText("Cancelar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Agregar cliente");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel24.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        jLabel24.setText("Nombre:");
+
+        jLabel34.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        jLabel34.setText("Telefono:");
+
+        jLabel35.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        jLabel35.setText("Correo:");
+
+        jLabel36.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel36.setText("Cliente nuevo");
+
+        nombre_clienteNuevo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                nombre_clienteNuevoFocusGained(evt);
+            }
+        });
+
+        correo_clienteNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                correo_clienteNuevoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 230, Short.MAX_VALUE)
+                        .addComponent(jButton2))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel36))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(48, 48, 48)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel24, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel34, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel35, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(telefono_clienteNuevo, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                            .addComponent(correo_clienteNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nombre_clienteNuevo))))
+                .addContainerGap())
+        );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButton1, jButton2});
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {correo_clienteNuevo, nombre_clienteNuevo, telefono_clienteNuevo});
+
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jLabel36)
+                .addGap(30, 30, 30)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel24)
+                    .addComponent(nombre_clienteNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel34)
+                    .addComponent(telefono_clienteNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel35)
+                    .addComponent(correo_clienteNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout nuevoClienteLayout = new javax.swing.GroupLayout(nuevoCliente.getContentPane());
+        nuevoCliente.getContentPane().setLayout(nuevoClienteLayout);
+        nuevoClienteLayout.setHorizontalGroup(
+            nuevoClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        nuevoClienteLayout.setVerticalGroup(
+            nuevoClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTabbedPane1.setBackground(new java.awt.Color(255, 255, 255));
+        JtabbedPane.setBackground(new java.awt.Color(255, 255, 255));
+        JtabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                JtabbedPaneStateChanged(evt);
+            }
+        });
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.addComponentListener(new java.awt.event.ComponentAdapter() {
+        gestionarReparaciones.setBackground(new java.awt.Color(255, 255, 255));
+        gestionarReparaciones.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
-                jPanel1ComponentShown(evt);
+                gestionarReparacionesComponentShown(evt);
             }
         });
 
@@ -305,99 +709,99 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout gestionarReparacionesLayout = new javax.swing.GroupLayout(gestionarReparaciones);
+        gestionarReparaciones.setLayout(gestionarReparacionesLayout);
+        gestionarReparacionesLayout.setHorizontalGroup(
+            gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane3)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gestionarReparacionesLayout.createSequentialGroup()
+                .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(gestionarReparacionesLayout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(gestionarReparacionesLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(gestionarReparacionesLayout.createSequentialGroup()
                                 .addComponent(jButtonAltaTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(34, 34, 34)
                                 .addComponent(jButtonModificarTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(38, 38, 38)
                                 .addComponent(jButtonEliminarTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(gestionarReparacionesLayout.createSequentialGroup()
+                                .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(116, 116, 116)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(gestionarReparacionesLayout.createSequentialGroup()
                                         .addComponent(jTextFModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGroup(gestionarReparacionesLayout.createSequentialGroup()
                                         .addComponent(jTextFMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGroup(gestionarReparacionesLayout.createSequentialGroup()
                                         .addComponent(jTextF2Falla, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(163, 163, 163)
                                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(gestionarReparacionesLayout.createSequentialGroup()
+                        .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jTextFiEstadoEquipo)
                                 .addComponent(jTextFiEstadoRecepcionEqui)
                                 .addComponent(jLabelFechaIngreso, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE))
                             .addComponent(jTextF1GestionRepBuscarEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(19, 19, 19))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gestionarReparacionesLayout.createSequentialGroup()
                         .addComponent(jButtonFinalizarReparacion)
                         .addGap(31, 31, 31))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(gestionarReparacionesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2)
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonAltaTarea, jButtonEliminarTarea, jButtonModificarTarea});
+        gestionarReparacionesLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonAltaTarea, jButtonEliminarTarea, jButtonModificarTarea});
 
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        gestionarReparacionesLayout.setVerticalGroup(
+            gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(gestionarReparacionesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextF1GestionRepBuscarEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextF2Falla, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelFechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFiEstadoEquipo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jTextFModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jTextFiEstadoRecepcionEqui, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(gestionarReparacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonAltaTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonModificarTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonEliminarTarea, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -405,52 +809,59 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jButtonAltaTarea, jButtonEliminarTarea, jButtonModificarTarea});
+        gestionarReparacionesLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jButtonAltaTarea, jButtonEliminarTarea, jButtonModificarTarea});
 
-        jTabbedPane1.addTab("Gestionar Reparaciones", jPanel1);
+        JtabbedPane.addTab("Gestionar Reparaciones", gestionarReparaciones);
 
-        jPanelInsumos.setBackground(new java.awt.Color(204, 204, 204));
-        jPanelInsumos.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jPanelProductos.setBackground(new java.awt.Color(204, 204, 204));
+        jPanelProductos.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTextFieldBuscarInsumos.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jTextFieldBuscarInsumos.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextFieldBuscarInsumosKeyPressed(evt);
-            }
-        });
-        jPanelInsumos.add(jTextFieldBuscarInsumos, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 10, 428, 37));
-
-        jTableInsumos.setModel(new javax.swing.table.DefaultTableModel(
+        jTableProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"", null, null, null},
-                {"", null, null, null}
+                {"", null, null, null, null},
+                {"", null, null, null, null}
             },
             new String [] {
-                "Codigo", "Nombre", "Precio", "Stock"
+                "Codigo", "Nombre", "Precio", "Stock", "Cantidad requerida"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jTableInsumos.setRowHeight(25);
-        jTableInsumos.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTableProductos.setRowHeight(25);
+        jTableProductos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableInsumosMouseClicked(evt);
+                jTableProductosMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(jTableInsumos);
+        jScrollPane1.setViewportView(jTableProductos);
 
-        jPanelInsumos.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 54, 575, 370));
+        jPanelProductos.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 54, 575, 400));
 
-        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel17.setText("Cantidad requerida");
-        jPanelInsumos.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 440, -1, 20));
-        jPanelInsumos.add(jSpinFieldCantidadRequerida, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 440, 90, -1));
+        jTextFieldBuscarProducto.setText("Ingrese el nombre del producto");
+        jTextFieldBuscarProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldBuscarProductoActionPerformed(evt);
+            }
+        });
+        jTextFieldBuscarProducto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldBuscarProductoKeyPressed(evt);
+            }
+        });
+        jPanelProductos.add(jTextFieldBuscarProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(85, 11, 428, 37));
 
         jButtonAgregarFactura.setBackground(new java.awt.Color(0, 102, 51));
         jButtonAgregarFactura.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -461,27 +872,10 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
                 jButtonAgregarFacturaActionPerformed(evt);
             }
         });
-        jPanelInsumos.add(jButtonAgregarFactura, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 470, -1, 35));
+        jPanelProductos.add(jButtonAgregarFactura, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 470, -1, 35));
 
-        jLabel16.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel16.setText("Buscar insumo");
-        jPanelInsumos.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
-
-        jPanelFactura.setBackground(new java.awt.Color(0, 153, 204));
+        jPanelFactura.setBackground(new java.awt.Color(204, 204, 255));
         jPanelFactura.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jButtonCancelarVenta.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButtonCancelarVenta.setText("Cancelar");
-        jButtonCancelarVenta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCancelarVentaActionPerformed(evt);
-            }
-        });
-        jPanelFactura.add(jButtonCancelarVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 0, -1, -1));
-
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel6.setText("Factura");
-        jPanelFactura.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(277, 34, -1, -1));
 
         jTableFactura.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -505,6 +899,15 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
         jPanelFactura.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 57, 575, 400));
 
+        jButtonCancelar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jButtonCancelar.setText("Cancelar");
+        jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCancelarActionPerformed(evt);
+            }
+        });
+        jPanelFactura.add(jButtonCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 0, -1, -1));
+
         jButtonQuitar.setBackground(new java.awt.Color(204, 0, 0));
         jButtonQuitar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jButtonQuitar.setForeground(new java.awt.Color(255, 255, 255));
@@ -515,14 +918,6 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             }
         });
         jPanelFactura.add(jButtonQuitar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 470, 110, 30));
-
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel9.setText("Total: $");
-        jPanelFactura.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 480, -1, -1));
-
-        jLabelTotal.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabelTotal.setText("0.0");
-        jPanelFactura.add(jLabelTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 480, 50, -1));
 
         jButtonVender.setBackground(new java.awt.Color(0, 102, 51));
         jButtonVender.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -535,203 +930,454 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         });
         jPanelFactura.add(jButtonVender, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 470, 110, 30));
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel6.setText("Factura");
+        jPanelFactura.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(277, 34, -1, -1));
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel9.setText("Total: $");
+        jPanelFactura.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 480, -1, -1));
+
+        jLabelTotal.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabelTotal.setText("0.0");
+        jPanelFactura.add(jLabelTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 480, 50, -1));
+
         javax.swing.GroupLayout jPanelVentaLayout = new javax.swing.GroupLayout(jPanelVenta);
         jPanelVenta.setLayout(jPanelVentaLayout);
         jPanelVentaLayout.setHorizontalGroup(
             jPanelVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelVentaLayout.createSequentialGroup()
-                .addComponent(jPanelInsumos, javax.swing.GroupLayout.PREFERRED_SIZE, 595, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanelProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 595, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelFactura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelVentaLayout.setVerticalGroup(
             jPanelVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelInsumos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanelFactura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Venta", jPanelVenta);
+        JtabbedPane.addTab("Venta", jPanelVenta);
 
-        jTableGestRepEquiposParaReparar1.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
-        jTableGestRepEquiposParaReparar1.setModel(new javax.swing.table.DefaultTableModel(
+        jPanel7.setBackground(new java.awt.Color(255, 255, 255));
+
+        tabla_clientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Modelo", "Marca", "Fecha Ingreso", "Estado", "Id"
+                "Id", "Nombre", "Telefono", "Mail"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
-            };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jTableGestRepEquiposParaReparar1.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabla_clientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tabla_clientes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableGestRepEquiposParaReparar1MouseClicked(evt);
+                tabla_clientesMouseClicked(evt);
             }
         });
-        jScrollPane5.setViewportView(jTableGestRepEquiposParaReparar1);
-        jTableGestRepEquiposParaReparar1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane7.setViewportView(tabla_clientes);
+        if (tabla_clientes.getColumnModel().getColumnCount() > 0) {
+            tabla_clientes.getColumnModel().getColumn(0).setPreferredWidth(25);
+            tabla_clientes.getColumnModel().getColumn(1).setPreferredWidth(100);
+            tabla_clientes.getColumnModel().getColumn(2).setPreferredWidth(50);
+            tabla_clientes.getColumnModel().getColumn(3).setPreferredWidth(125);
+        }
 
-        jTextF2Falla1.addActionListener(new java.awt.event.ActionListener() {
+        buscador_Cliente.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                buscador_ClienteCaretUpdate(evt);
+            }
+        });
+
+        jLabel16.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel16.setText("Buscar Cliente");
+
+        agregar_repuesto.setFont(new java.awt.Font("Trebuchet MS", 0, 11)); // NOI18N
+        agregar_repuesto.setText("Cliente nuevo");
+        agregar_repuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextF2Falla1ActionPerformed(evt);
+                agregar_repuestoActionPerformed(evt);
             }
         });
 
-        jLabel10.setText("Falla");
+        jLabel17.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel17.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        jLabel17.setText("Lista de clientes:");
 
-        jLabel11.setText("Marca");
-
-        jLabel12.setText("Modelo");
-
-        jLabel13.setText("Fecha de Ingreso");
-
-        jLabel14.setText("Estado");
-
-        jLabel15.setText("Estado recepcion");
-
-        jLabelFechaIngreso1.setText("alguna fecha ");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(24, 24, 24)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(116, 116, 116)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jTextFModelo1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jTextFMarca1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jTextF2Falla1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(163, 163, 163)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jTextFiEstadoEquipo1)
-                        .addComponent(jTextFiEstadoRecepcionEqui1)
-                        .addComponent(jLabelFechaIngreso1, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE))
-                    .addGap(24, 24, 24)))
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(buscador_Cliente)
+                    .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(agregar_repuesto, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(58, 58, 58)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(352, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(204, 204, 204)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextF2Falla1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabelFechaIngreso1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextFiEstadoEquipo1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextFMarca1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFModelo1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFiEstadoRecepcionEqui1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addContainerGap(205, Short.MAX_VALUE)))
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel16)
+                .addGap(18, 18, 18)
+                .addComponent(buscador_Cliente, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel17)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(agregar_repuesto)
+                .addGap(37, 37, 37))
         );
 
-        jTabbedPane1.addTab("Equipos reparados", jPanel2);
+        jPanel8.setBackground(new java.awt.Color(255, 255, 255));
 
-        jTableGestRepEquiposParaReparar2.setFont(new java.awt.Font("Microsoft JhengHei UI Light", 0, 14)); // NOI18N
-        jTableGestRepEquiposParaReparar2.setModel(new javax.swing.table.DefaultTableModel(
+        equipos_Asociados.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        equipos_Asociados.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                equipos_AsociadosItemStateChanged(evt);
+            }
+        });
+
+        jLabel26.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        jLabel26.setText("Celulares asociados:");
+
+        jLabel27.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel27.setText("Celulares asociados");
+
+        jLabel18.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel18.setText("Motivo:");
+
+        jLabel19.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel19.setText("Marca: ");
+
+        jLabel20.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel20.setText("Detalles: ");
+
+        jLabel21.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel21.setText("Modelo:");
+
+        nombre_cliente.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+        nombre_cliente.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+
+        marca_celular.setEnabled(false);
+
+        modelo_celular.setEnabled(false);
+
+        detalles_celular.setColumns(20);
+        detalles_celular.setRows(5);
+        jScrollPane8.setViewportView(detalles_celular);
+
+        guardarCambios_celular.setText("Guardar cambios");
+        guardarCambios_celular.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarCambios_celularActionPerformed(evt);
+            }
+        });
+
+        new_celular.setBackground(new java.awt.Color(255, 255, 255));
+        new_celular.setText("ingresar un nuevo equipo");
+        new_celular.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                new_celularStateChanged(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel18)
+                            .addComponent(jLabel21)
+                            .addComponent(jLabel19))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(motivo_celular, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(modelo_celular, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(marca_celular, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addComponent(jLabel20)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(13, 13, 13))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                                .addComponent(guardarCambios_celular)
+                                .addContainerGap())))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jLabel27)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(nombre_cliente, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel26)
+                            .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addComponent(equipos_Asociados, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(new_celular, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
+        );
+
+        jPanel8Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {marca_celular, modelo_celular, motivo_celular});
+
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(nombre_cliente))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel26)
+                .addGap(4, 4, 4)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(equipos_Asociados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(new_celular))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(marca_celular, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel19))
+                            .addComponent(jLabel20))
+                        .addGap(21, 21, 21)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel21)
+                            .addComponent(modelo_celular, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(guardarCambios_celular)
+                    .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(motivo_celular, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel18)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        equipos_Asociados.removeAllItems();
+
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel28.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel28.setText("Añadir presupuesto");
+
+        fechaActual.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+        fechaActual.setText("Fecha");
+
+        jLabel23.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel23.setText("Total:  $");
+
+        agregar_presupuesto.setText("Añadir");
+        agregar_presupuesto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregar_presupuestoActionPerformed(evt);
+            }
+        });
+
+        total_presu.setText(" 0.00");
+
+        agregar_repuesto_presu.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        agregar_repuesto_presu.setText("+");
+        agregar_repuesto_presu.setEnabled(false);
+        agregar_repuesto_presu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregar_repuesto_presuActionPerformed(evt);
+            }
+        });
+
+        tabla_tareasPresu.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Modelo", "Marca", "Fecha Ingreso", "Estado", "Id"
+                "Nombre", "garantia", "Subtotal"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
-            };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jTableGestRepEquiposParaReparar2.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabla_tareasPresu.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tabla_tareasPresu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableGestRepEquiposParaReparar2MouseClicked(evt);
+                tabla_tareasPresuMouseClicked(evt);
             }
         });
-        jScrollPane6.setViewportView(jTableGestRepEquiposParaReparar2);
-        jTableGestRepEquiposParaReparar2.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane10.setViewportView(tabla_tareasPresu);
+        if (tabla_tareasPresu.getColumnModel().getColumnCount() > 0) {
+            tabla_tareasPresu.getColumnModel().getColumn(0).setPreferredWidth(100);
+            tabla_tareasPresu.getColumnModel().getColumn(1).setPreferredWidth(50);
+            tabla_tareasPresu.getColumnModel().getColumn(2).setPreferredWidth(50);
+        }
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jLabel29.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        jLabel29.setText("Repuestos");
+
+        jLabel30.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        jLabel30.setText("Tareas predefinidas");
+
+        tabla_repuestosPresu.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre", "Cantidad", "Subtotal"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tabla_repuestosPresu.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tabla_repuestosPresu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabla_repuestosPresuMouseClicked(evt);
+            }
+        });
+        jScrollPane11.setViewportView(tabla_repuestosPresu);
+        if (tabla_repuestosPresu.getColumnModel().getColumnCount() > 0) {
+            tabla_repuestosPresu.getColumnModel().getColumn(0).setPreferredWidth(100);
+            tabla_repuestosPresu.getColumnModel().getColumn(1).setPreferredWidth(50);
+            tabla_repuestosPresu.getColumnModel().getColumn(2).setPreferredWidth(50);
+        }
+
+        agregar_tarea_presu.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        agregar_tarea_presu.setText("+");
+        agregar_tarea_presu.setEnabled(false);
+        agregar_tarea_presu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregar_tarea_presuActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane6)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel28)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(fechaActual, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel29)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(agregar_repuesto_presu))
+                            .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel30)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(agregar_tarea_presu)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(agregar_presupuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(total_presu)))))
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(384, Short.MAX_VALUE))
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel28)
+                    .addComponent(fechaActual))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel29)
+                    .addComponent(jLabel30)
+                    .addComponent(agregar_tarea_presu)
+                    .addComponent(agregar_repuesto_presu))
+                .addGap(2, 2, 2)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                    .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(total_presu))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(agregar_presupuesto)
+                .addGap(16, 16, 16))
         );
 
-        jTabbedPane1.addTab("Equipos entregados", jPanel3);
+        javax.swing.GroupLayout crearPresupuestoLayout = new javax.swing.GroupLayout(crearPresupuesto);
+        crearPresupuesto.setLayout(crearPresupuestoLayout);
+        crearPresupuestoLayout.setHorizontalGroup(
+            crearPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(crearPresupuestoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(crearPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        crearPresupuestoLayout.setVerticalGroup(
+            crearPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, crearPresupuestoLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(crearPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(crearPresupuestoLayout.createSequentialGroup()
+                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+
+        JtabbedPane.addTab("Crear Presupuesto", crearPresupuesto);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(JtabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 3, Short.MAX_VALUE)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(JtabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -739,15 +1385,11 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
 
     private void jButtonVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVenderActionPerformed
         if(!factura.isEmpty()){
-            nuevaVenta.setDetalles(factura);
+            venta.setDetalles(factura);
             Date fechaHoy = new Date();
-            nuevaVenta.setFecha(Funciones.dateFormat(fechaHoy));
-            ventaControler.insertarVenta(nuevaVenta);
-            JOptionPane.showMessageDialog(null, "Venta registrada exitosamente");
-            reset();
+            venta.setFecha(fechaHoy);
+            vc.insertarVenta(venta);
         }
-        else
-            JOptionPane.showMessageDialog(null, "Error la factura esta vacia");
     }//GEN-LAST:event_jButtonVenderActionPerformed
 
     private void jButtonQuitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonQuitarActionPerformed
@@ -755,7 +1397,7 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
             int idInsumo = factura.get(jTableFactura.getSelectedRow()).getIdInsumo();
             int cantidadRequerida = factura.get(jTableFactura.getSelectedRow()).getCantidad();
             factura.remove(jTableFactura.getSelectedRow());
-            Iterator<Producto> it = insumos.iterator();
+            Iterator<Producto> it = productos.iterator();
             Producto producto = new Producto();
 
             while(it.hasNext()){
@@ -769,76 +1411,121 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
                 else
                 System.out.println("Error Fatal: no lo encontro el prodcuto\n");
             }
-            refrescarTablaFactura();
-            refrescarTablaInsumos();
-        }
-    }//GEN-LAST:event_jButtonQuitarActionPerformed
-
-    private void jButtonCancelarVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarVentaActionPerformed
-        reset();
-    }//GEN-LAST:event_jButtonCancelarVentaActionPerformed
-
-    private void jButtonAgregarFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarFacturaActionPerformed
-        if(jTableInsumos.getSelectedRow() != -1){
-            int stock = Integer.parseInt(String.valueOf(jTableInsumos.getValueAt(jTableInsumos.getSelectedRow(),3)));
-            int cantidadPedida = jSpinFieldCantidadRequerida.getValue();
-            if(cantidadPedida <= stock){
-                Iterator<Producto> it = insumos.iterator();
-                Producto nuevoInsumoVenta = new Producto();
-                while(it.hasNext()){
-                    nuevoInsumoVenta = it.next();
-                    if(nuevoInsumoVenta.getId() == idInsumo){
-                        nuevoInsumoVenta.setStock(stock - cantidadPedida);
+            float total =  Float.parseFloat(jLabelTotal.getText());
+            tablaFactura.setRowCount(0);
+            String nombreInsumo = "Error";
+            int fila=0;
+            for(DetalleVenta dv : factura){
+                tablaFactura.addRow(new Object[3]);
+                for(Producto p: productos){
+                    if(p.getId() == dv.getIdInsumo()){
+                        nombreInsumo = p.getNombre();
                         break;
                     }
                     else
-                        System.out.println("Error Fatal: no se encontro el producto\n");
+                    System.out.println("Error Fatal, no se encontro el insumo\n");
                 }
-                
-                
-                boolean modificado = false;
-                Iterator<DetalleVenta> it2 = factura.iterator();
-                DetalleVenta viejoDetalleVenta = new DetalleVenta();
-                while(it2.hasNext()){
-                    viejoDetalleVenta = it2.next();
-                    if(nuevoInsumoVenta.getId() == viejoDetalleVenta.getIdInsumo()){
-                        viejoDetalleVenta.setCantidad(viejoDetalleVenta.getCantidad() + cantidadPedida);
-                        viejoDetalleVenta.setSubtotal(nuevoInsumoVenta.getPrecio()*viejoDetalleVenta.getCantidad());
-                        modificado = true;
+                jTableFactura.setValueAt(nombreInsumo,fila,0);
+                jTableFactura.setValueAt(dv.getCantidad(), fila,1);
+                jTableFactura.setValueAt(dv.getSubtotal(), fila,2);
+                total -= dv.getSubtotal();
+            }
+            jLabelTotal.setText(String.valueOf(total));
+        }
+    }//GEN-LAST:event_jButtonQuitarActionPerformed
+
+    private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
+        //Hay otra forma de hacerlo sin llamar a la base de datos
+        productos.removeAll(productos);
+        limpiar();
+    }//GEN-LAST:event_jButtonCancelarActionPerformed
+
+    private void jButtonAgregarFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarFacturaActionPerformed
+        if(jTableProductos.getSelectedRow() != -1){
+            int stock = (int) jTableProductos.getValueAt(jTableProductos.getSelectedRow(),3);
+            int cantidadPedida = (int) jTableProductos.getValueAt(jTableProductos.getSelectedRow(),4);
+            if(cantidadPedida <= stock){
+                Iterator<Producto> it = productos.iterator();
+                Producto producto = new Producto();
+                while(it.hasNext()){
+                    //Ver si no se salta el primero
+                    producto = it.next();
+                    //Ver si modifica el iterator
+                    if(producto.getId() == idProducto){
+                        producto.setStock(stock - cantidadPedida);
                         break;
                     }
+                    else
+                    System.out.println("Error Fatal: no lo encontro el prodcuto\n");
                 }
-                if(!modificado){
-                    float subtotal = nuevoInsumoVenta.getPrecio()*cantidadPedida;
-                    DetalleVenta nuevoDetalleVenta = new DetalleVenta(0, cantidadPedida, nuevoInsumoVenta.getId(), 0, subtotal);
-                    factura.add(detalleVenta);
+                DetalleVenta detalleVenta = new DetalleVenta();
+                detalleVenta.setCantidad(cantidadPedida);
+                detalleVenta.setIdInsumo(producto.getId());
+                detalleVenta.setSubtotal(producto.getPrecio()*cantidadPedida);
+                factura.add(detalleVenta);
+
+                tablaProductos.setRowCount(0);
+                String nombreInsumo = "Error";
+                int fila=0;
+                float total =  (float)0.0;
+                for(DetalleVenta dv : factura){
+                    tablaFactura.addRow(new Object[3]);
+                    for(Producto p: productos){
+                        if(p.getId() == dv.getIdInsumo()){
+                            nombreInsumo = p.getNombre();
+                            break;
+                        }
+                        else
+                        System.out.println("Error Fatal, no se encontro el insumo\n");
+                    }
+                    jTableFactura.setValueAt(nombreInsumo,fila,0);
+                    jTableFactura.setValueAt(dv.getCantidad(), fila,1);
+                    jTableFactura.setValueAt(dv.getSubtotal(), fila,2);
+                    total += dv.getSubtotal();
                 }
-                
-                refrescarTablaInsumos();
-                refrescarTablaFactura();
+                jLabelTotal.setText(String.valueOf(total));
             }
-            else
-                JOptionPane.showMessageDialog(null, "ERROR: no se cuenta con el suficiente stock para agregar el insumo a la factura", "Error", ERROR_MESSAGE);
-        }
-        else{
-            JOptionPane.showMessageDialog(null, "No selecciono ningun insumo", "Error", ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonAgregarFacturaActionPerformed
 
-    private void jTextFieldBuscarInsumosKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldBuscarInsumosKeyPressed
-        refrescarTablaInsumos();
-    }//GEN-LAST:event_jTextFieldBuscarInsumosKeyPressed
+    private void jTextFieldBuscarProductoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldBuscarProductoKeyPressed
+        tablaProductos.setRowCount(0);
+        productos = vc.obtenerTodo();
 
-    private void jTableInsumosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableInsumosMouseClicked
-        idInsumo = (int) jTableInsumos.getValueAt(jTableInsumos.getSelectedRow(),0);
-    }//GEN-LAST:event_jTableInsumosMouseClicked
+        String buscar = jTextFieldBuscarProducto.getText();
+        buscar = buscar.toUpperCase();
+        int i;
+        int fila = 0;
+        for (Producto p : productos){
+            String buscando = p.getNombre();
+            buscando=buscando.toUpperCase();
+            buscando = buscando.toUpperCase();
 
-    private void jPanel1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel1ComponentShown
+            if(buscando.contains(buscar)){
+                tablaProductos.addRow(new Object[4]);
+                jTableProductos.setValueAt(p.getId(),fila,0);
+                jTableProductos.setValueAt(p.getNombre(),fila,1);
+                jTableProductos.setValueAt(p.getPrecio(),fila,2);
+                jTableProductos.setValueAt(p.getStock(), fila,3);
+                fila++;
+            }
+        }
+    }//GEN-LAST:event_jTextFieldBuscarProductoKeyPressed
+
+    private void jTextFieldBuscarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldBuscarProductoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldBuscarProductoActionPerformed
+
+    private void jTableProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableProductosMouseClicked
+        idProducto = (int) jTableProductos.getValueAt(jTableProductos.getSelectedRow(),0);
+    }//GEN-LAST:event_jTableProductosMouseClicked
+
+    private void gestionarReparacionesComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_gestionarReparacionesComponentShown
         // TODO add your handling code here:
         if(reparacion != null){
             this.mController.obtenerReparacion(reparacion.getId());
         }
-    }//GEN-LAST:event_jPanel1ComponentShown
+    }//GEN-LAST:event_gestionarReparacionesComponentShown
 
     private void jTextF1GestionRepBuscarEquiposKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextF1GestionRepBuscarEquiposKeyPressed
         // TODO add your handling code here:
@@ -916,73 +1603,302 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         this.mController.obtenerReparacion(id);
     }//GEN-LAST:event_jTableGestRepEquiposParaRepararMouseClicked
 
-    private void jTableGestRepEquiposParaReparar1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaReparar1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTableGestRepEquiposParaReparar1MouseClicked
+    private void tabla_clientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabla_clientesMouseClicked
+        if(evt.getClickCount() == 2){
+            tareasPresu.clear();
+            repuestosPresu.clear();
+            int row = tabla_clientes.getSelectedRow();
+            idCliente = Integer.parseInt(String.valueOf(tabla_clientes.getValueAt(row, 0)));
+            String nombre = String.valueOf(tabla_clientes.getValueAt(row, 1));
+            presupuestoController.recuperarCelulares(idCliente);
+            nombre_cliente.setText(nombre);
+            agregar_repuesto_presu.setEnabled(true);
+            agregar_tarea_presu.setEnabled(true);
+        }
+    }//GEN-LAST:event_tabla_clientesMouseClicked
+    public void vaciarCamposPresu(){
+        
+    }
+    private void buscador_ClienteCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_buscador_ClienteCaretUpdate
+        presupuestoController.buscarCliente(buscador_Cliente.getText());
+    }//GEN-LAST:event_buscador_ClienteCaretUpdate
 
-    private void jTableGestRepEquiposParaReparar2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableGestRepEquiposParaReparar2MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTableGestRepEquiposParaReparar2MouseClicked
+    private void agregar_repuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_repuestoActionPerformed
+        nuevoCliente.setVisible(true);
+        nuevoCliente.setModal(true);
+        nuevoCliente.setLocationRelativeTo(this);
+    }//GEN-LAST:event_agregar_repuestoActionPerformed
 
-    private void jTextF2Falla1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextF2Falla1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextF2Falla1ActionPerformed
+    private void equipos_AsociadosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_equipos_AsociadosItemStateChanged
 
+    }//GEN-LAST:event_equipos_AsociadosItemStateChanged
+
+    private void tabla_tareasPresuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabla_tareasPresuMouseClicked
+       if(evt.getClickCount() == 2){
+            DefaultTableModel temp = (DefaultTableModel) tabla_tareasPresu.getModel();
+            int row = tabla_tareasPresu.getSelectedRow();
+            String name = String.valueOf(tabla_tareasPresu.getValueAt(row, 0));
+            float subt = -1 * Float.parseFloat(String.valueOf(tabla_tareasPresu.getValueAt(row, 2)));
+            float total = Float.parseFloat(total_presu.getText());
+            total -= subt;
+            total_presu.setText(Funciones.redondeo2String(total));
+            temp.removeRow(row);
+            tareasPresu.remove(name);
+        }
+    }//GEN-LAST:event_tabla_tareasPresuMouseClicked
+
+    private void tabla_repuestosPresuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabla_repuestosPresuMouseClicked
+        if(evt.getClickCount() == 2){
+            DefaultTableModel temp = (DefaultTableModel) tabla_repuestosPresu.getModel();
+            int row = tabla_repuestosPresu.getSelectedRow();
+            String name = String.valueOf(tabla_repuestosPresu.getValueAt(row, 0));
+            float subt = -1 * Float.parseFloat(String.valueOf(tabla_repuestosPresu.getValueAt(row, 2)));
+            float total = Float.parseFloat(total_presu.getText());
+            total -= subt;
+            total_presu.setText(Funciones.redondeo2String(total));
+            temp.removeRow(row);
+            repuestosPresu.remove(name);
+        }
+    }//GEN-LAST:event_tabla_repuestosPresuMouseClicked
+
+    private void agregar_repuesto_presuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_repuesto_presuActionPerformed
+        AñadirRepuesto.setVisible(true);
+        AñadirRepuesto.setModal(true);
+        AñadirRepuesto.setSize(450,550);
+        AñadirRepuesto.setLocationRelativeTo(this);
+        presupuestoController.buscarRepuesto("");
+    }//GEN-LAST:event_agregar_repuesto_presuActionPerformed
+
+    private void buscador_tareaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_buscador_tareaCaretUpdate
+        presupuestoController.buscarRepuesto(buscador_tarea.getText());
+    }//GEN-LAST:event_buscador_tareaCaretUpdate
+
+    private void tabla_buscadorRepuestosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabla_buscadorRepuestosMouseClicked
+        if(evt.getClickCount() == 2){
+            cantidad_repuesto.requestFocus();
+        }
+    }//GEN-LAST:event_tabla_buscadorRepuestosMouseClicked
+
+    private void cantidad_repuestoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cantidad_repuestoKeyTyped
+        char caracter = evt.getKeyChar();
+        if(((caracter < '0') || (caracter > '9')) && (caracter != '\b')){
+            evt.consume();
+        }
+        if(caracter == KeyEvent.VK_ENTER){
+            agregar_repuesto.doClick();
+        }
+    }//GEN-LAST:event_cantidad_repuestoKeyTyped
+
+    private void agregar_repuesto1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_repuesto1ActionPerformed
+        int row = tabla_buscadorRepuestos.getSelectedRow();
+        String name = String.valueOf(tabla_buscadorRepuestos.getValueAt(row, 0));
+        int cant = Integer.parseInt(cantidad_repuesto.getText());
+        int stock = Integer.parseInt(String.valueOf(tabla_buscadorRepuestos.getValueAt(row, 2)));
+        if(cant > stock){
+            JOptionPane.showMessageDialog(null, "La cantidad deseada es mayor al stock, \n por favor ingrese un valor razonable.", "ERROR",JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            AñadirRepuesto.setModal(false);
+            presupuestoController.añadirRepAlPresu(name,cant);
+            repuestosPresu.put(name,cant);
+            AñadirRepuesto.dispose();
+        }
+    }//GEN-LAST:event_agregar_repuesto1ActionPerformed
+
+    private void tabla_buscadorTareasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabla_buscadorTareasMouseClicked
+        if(evt.getClickCount() == 2){
+            agregar_tarea.doClick();
+        }
+    }//GEN-LAST:event_tabla_buscadorTareasMouseClicked
+
+    private void agregar_tareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_tareaActionPerformed
+        try{
+            int row = tabla_buscadorTareas.getSelectedRow();
+            String name = String.valueOf(tabla_buscadorTareas.getValueAt(row, 0));
+            tareasPresu.add(name);
+            presupuestoController.añadirTareaAlPresu(name);
+            AñadirTarea.setModal(false);
+            AñadirTarea.dispose();
+        }catch(Exception e){
+            AñadirTarea.setModal(false);
+            AñadirTarea.dispose();
+        }
+    }//GEN-LAST:event_agregar_tareaActionPerformed
+
+    private void buscador_tarea1CaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_buscador_tarea1CaretUpdate
+        presupuestoController.buscarTareasPredef(buscador_tarea.getText());
+    }//GEN-LAST:event_buscador_tarea1CaretUpdate
+
+    private void buscador_tarea1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscador_tarea1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buscador_tarea1ActionPerformed
+
+    private void agregar_tarea_presuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_tarea_presuActionPerformed
+        AñadirTarea.setVisible(true);
+        AñadirTarea.setModal(true);
+        AñadirTarea.setSize(400,520);
+        AñadirTarea.setLocationRelativeTo(this);
+        presupuestoController.buscarTareasPredef("");
+    }//GEN-LAST:event_agregar_tarea_presuActionPerformed
+
+    private void agregar_presupuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_presupuestoActionPerformed
+       Presupuesto aux = new Presupuesto();
+       aux.setFechaEmision(new Date());
+       Float total = Float.parseFloat(total_presu.getText());
+       aux.setCostoServicio(total);
+       aux.setIdEquipo(idEquipo);
+       aux.setInsumos(repuestosPresu);
+       aux.setListaTareas(tareasPresu);
+       presupuestoController.añadirPresupuesto(aux);
+       agregar_repuesto_presu.setEnabled(false);
+       agregar_tarea_presu.setEnabled(false);
+    }//GEN-LAST:event_agregar_presupuestoActionPerformed
+
+    private void guardarCambios_celularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarCambios_celularActionPerformed
+        equipo_Presu = new Equipo();
+        equipo_Presu.setDetallesIngreso(detalles_celular.getText());
+        equipo_Presu.setFechaRecepcion(new Date());
+        equipo_Presu.setMotivoFalla(motivo_celular.getText());
+        if(idEquipo == 0){
+            equipo_Presu.setIdCliente(idCliente);
+            equipo_Presu.setModelo(modelo_celular.getText());
+            equipo_Presu.setMarca(marca_celular.getText());  
+            presupuestoController.guardarCambiosCelu(equipo_Presu, 0);
+        }else{
+            equipo_Presu.setId(idEquipo);
+            presupuestoController.guardarCambiosCelu(equipo_Presu, 1);
+        }
+        
+    }//GEN-LAST:event_guardarCambios_celularActionPerformed
+
+    private void new_celularStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_new_celularStateChanged
+        if(new_celular.isSelected()){
+            idEquipo = 0;
+            equipos_Asociados.setEnabled(false);
+            modelo_celular.setEnabled(true);
+            marca_celular.setEnabled(true);
+        }else{
+            idEquipo = 0;
+            equipos_Asociados.setEnabled(true);
+            modelo_celular.setEnabled(false);
+            marca_celular.setEnabled(false);
+        }
+    }//GEN-LAST:event_new_celularStateChanged
+
+    private void JtabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_JtabbedPaneStateChanged
+        if(crearPresupuesto.isShowing()){
+            presupuestoController.buscarCliente("");
+            fechaActual.setText(new Date().toString());
+        }
+    }//GEN-LAST:event_JtabbedPaneStateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        nuevoCliente.setModal(false);
+        nuevoCliente.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if(controlClienteNuevo()){
+            Cliente client = new Cliente();
+            client.setNombre(nombre_clienteNuevo.getText());
+            client.setCorreo(correo_clienteNuevo.getText());
+            client.setTelefono(telefono_clienteNuevo.getText());
+            nuevoCliente.setModal(false);
+            presupuestoController.añadirCliente(client);
+            nuevoCliente.dispose();
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+    public boolean controlClienteNuevo(){
+        if(nombre_clienteNuevo.getText() == ""){
+            nombre_clienteNuevo.setBorder(rojo);
+            return false;
+        }
+        return true;
+    }
+    private void correo_clienteNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_correo_clienteNuevoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_correo_clienteNuevoActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        AñadirTarea.dispose();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        AñadirRepuesto.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void nombre_clienteNuevoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nombre_clienteNuevoFocusGained
+        nombre_clienteNuevo.setBorder(negro);
+    }//GEN-LAST:event_nombre_clienteNuevoFocusGained
+    
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
+    public static void main(String argseliminar_repuesto){     
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Principal(0).setVisible(true);
             }
         });
-    }
+   }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JDialog AñadirRepuesto;
+    private javax.swing.JDialog AñadirTarea;
+    private javax.swing.JTabbedPane JtabbedPane;
+    private javax.swing.JButton agregar_presupuesto;
+    private javax.swing.JButton agregar_repuesto;
+    private javax.swing.JButton agregar_repuesto1;
+    private javax.swing.JButton agregar_repuesto_presu;
+    private javax.swing.JButton agregar_tarea;
+    private javax.swing.JButton agregar_tarea_presu;
+    private javax.swing.JTextField buscador_Cliente;
+    private javax.swing.JTextField buscador_tarea;
+    private javax.swing.JTextField buscador_tarea1;
+    private javax.swing.JTextField cantidad_repuesto;
+    private javax.swing.JTextField correo_clienteNuevo;
+    private javax.swing.JPanel crearPresupuesto;
+    private javax.swing.JTextArea detalles_celular;
+    private javax.swing.JComboBox<String> equipos_Asociados;
+    private javax.swing.JLabel fechaActual;
+    private javax.swing.JPanel gestionarReparaciones;
+    private javax.swing.JButton guardarCambios_celular;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButtonAgregarFactura;
     public javax.swing.JButton jButtonAltaTarea;
-    private javax.swing.JButton jButtonCancelarVenta;
+    private javax.swing.JButton jButtonCancelar;
     public javax.swing.JButton jButtonEliminarTarea;
     public javax.swing.JButton jButtonFinalizarReparacion;
     public javax.swing.JButton jButtonModificarTarea;
     private javax.swing.JButton jButtonQuitar;
     private javax.swing.JButton jButtonVender;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -990,52 +1906,50 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     public javax.swing.JLabel jLabelFechaIngreso;
-    public javax.swing.JLabel jLabelFechaIngreso1;
     private javax.swing.JLabel jLabelTotal;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanelFactura;
-    private javax.swing.JPanel jPanelInsumos;
+    private javax.swing.JPanel jPanelProductos;
     private javax.swing.JPanel jPanelVenta;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane10;
+    private javax.swing.JScrollPane jScrollPane11;
+    private javax.swing.JScrollPane jScrollPane12;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
-    private com.toedter.components.JSpinField jSpinFieldCantidadRequerida;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane8;
+    private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JTable jTableFactura;
     public javax.swing.JTable jTableGestRepEquiposParaReparar;
-    public javax.swing.JTable jTableGestRepEquiposParaReparar1;
-    public javax.swing.JTable jTableGestRepEquiposParaReparar2;
     public javax.swing.JTable jTableGestRepListadoTareasSeleccionadas;
-    public javax.swing.JTable jTableInsumos;
+    public javax.swing.JTable jTableProductos;
     public javax.swing.JTextField jTextF1GestionRepBuscarEquipos;
     public javax.swing.JTextField jTextF2Falla;
-    public javax.swing.JTextField jTextF2Falla1;
     public javax.swing.JTextField jTextFMarca;
-    public javax.swing.JTextField jTextFMarca1;
     public javax.swing.JTextField jTextFModelo;
-    public javax.swing.JTextField jTextFModelo1;
     public javax.swing.JTextField jTextFiEstadoEquipo;
-    public javax.swing.JTextField jTextFiEstadoEquipo1;
     public javax.swing.JTextField jTextFiEstadoRecepcionEqui;
-    public javax.swing.JTextField jTextFiEstadoRecepcionEqui1;
-    public javax.swing.JTextField jTextFieldBuscarInsumos;
+    public javax.swing.JTextField jTextFieldBuscarProducto;
+    private javax.swing.JTextField marca_celular;
+    private javax.swing.JTextField modelo_celular;
+    private javax.swing.JTextField motivo_celular;
+    private javax.swing.JCheckBox new_celular;
+    private javax.swing.JLabel nombre_cliente;
+    private javax.swing.JTextField nombre_clienteNuevo;
+    private javax.swing.JDialog nuevoCliente;
+    private javax.swing.JTable tabla_buscadorRepuestos;
+    private javax.swing.JTable tabla_buscadorTareas;
+    private javax.swing.JTable tabla_clientes;
+    private javax.swing.JTable tabla_repuestosPresu;
+    private javax.swing.JTable tabla_tareasPresu;
+    private javax.swing.JTextField telefono_clienteNuevo;
+    private javax.swing.JLabel total_presu;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void mostrarTablaGestRepEquiposParaReparar(List presupuestos) {
-      
-    }
-
-    @Override
-    public void mostrarTablaGestRepListadoTareasSeleccionadas(Reparacion reparacion) {
-        
-    }
-
     @Override
     public void mostrarCamposReparacion(Reparacion reparacion) {
         this.reparacion = reparacion;
@@ -1055,75 +1969,173 @@ public class Principal extends javax.swing.JFrame implements GestionarReparacion
         }
         
     }
-    public void reset(){
-        //limpio los List
-        insumos.removeAll(insumos);
-        factura.removeAll(factura);
-        //Recupero de la base de datos
-        insumos = ventaControler.obtenerTodo();
-        //Refresco las tablas
-        refrescarTablaInsumos();
-        tablaFactura.setRowCount(0);
-        //limpio el total de la factura
-        jLabelTotal.setText("0.0");
-        //limpio la cantidad solcitada de un insumo
-        jSpinFieldCantidadRequerida.setValue(1);
-    }
-    
-    public void refrescarTablaInsumos(){
-        tablaInsumos.setRowCount(0);
-        String buscando = jTextFieldBuscarInsumos.getText();
+    public void limpiar(){
+        productos = vc.obtenerTodo();
+        tablaProductos.setRowCount(0);
         int fila = 0;
-        String nombreInsumo;
-        for(Producto p: insumos){
-            nombreInsumo = p.getNombre();
-            nombreInsumo = nombreInsumo.toUpperCase();
-            if(nombreInsumo.contains(buscando)){
-                tablaInsumos.addRow(new Object[4]);
-                tablaInsumos.setValueAt(p.getId(),fila,0);
-                tablaInsumos.setValueAt(p.getNombre(),fila,1);
-                tablaInsumos.setValueAt(p.getPrecio(),fila,2);
-                tablaInsumos.setValueAt(p.getStock(), fila,3);
-                fila++;
-            }
+        for(Producto p: productos){
+            tablaProductos.addRow(new Object[4]);
+            jTableProductos.setValueAt(p.getId(),fila,0);
+            jTableProductos.setValueAt(p.getNombre(),fila,1);
+            jTableProductos.setValueAt(p.getPrecio(),fila,2);
+            jTableProductos.setValueAt(p.getStock(), fila,3);
+            fila++;
         }
+        
+        factura.removeAll(factura);
+        tablaFactura.setRowCount(0);
+        jLabelTotal.setText("0.0");
+    }
+
+    @Override
+    public void mostrarTablaGestRepEquiposParaReparar(List presupuestos) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mostrarTablaGestRepListadoTareasSeleccionadas(Reparacion reparacion) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void buscarProducto() {
-       
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
     @Override
     public void mostrarExito() {
-        int resp = JOptionPane.showConfirmDialog(null, "La tarea se agrego con exito.", "EXITO",JOptionPane.OK_OPTION,JOptionPane.INFORMATION_MESSAGE);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    @Override
+    public void mostrarError(String error) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+//------------------------------------------------------------------------------------------------------------------
+    //Presupuestos.View
 
     @Override
-    public void mostrarError(String text) {
+    public void showError(String text) {
         JOptionPane.showMessageDialog(null, text, "ERROR",JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void refrescarTablaFactura() {
-        tablaFactura.setRowCount(0);
-        String nombreInsumo = "Error";
-        int fila=0;
-        float total =  Float.parseFloat(jLabelTotal.getText());
-        for(DetalleVenta dv : factura){
-            tablaFactura.addRow(new Object[3]);
-            for(Producto p: insumos){
-                if(p.getId() == dv.getIdInsumo()){
-                    nombreInsumo = p.getNombre();
-                    break;
-                }
-                else
-                System.out.println("Error Fatal, no se encontro el insumo\n");
-            }
-            jTableFactura.setValueAt(nombreInsumo,fila,0);
-            jTableFactura.setValueAt(dv.getCantidad(), fila,1);
-            jTableFactura.setValueAt(dv.getSubtotal(), fila,2);
-            total += dv.getSubtotal();
+    @Override
+    public void mostrarClientes(List<Cliente> list) {
+        DefaultTableModel model = (DefaultTableModel) tabla_clientes.getModel();
+        model.setRowCount(0);
+        for(Cliente c : list){
+            Object[] nuevoCliente = {c.getId(),c.getNombre(),c.getTelefono(),c.getCorreo()};
+            model.addRow(nuevoCliente);
         }
-        jLabelTotal.setText(String.valueOf(total));
     }
+
+    @Override
+    public void agregarRepuesto(String nombre,int cantidad, float subtotal) {
+        DefaultTableModel model = (DefaultTableModel) tabla_repuestosPresu.getModel();
+        Object[] nuevoRepuesto = {nombre,cantidad,subtotal};
+        model.addRow(nuevoRepuesto);
+        float total = Float.parseFloat(total_presu.getText());
+        total += subtotal;
+        total_presu.setText(Funciones.redondeo2String(total));
+    }
+
+    @Override
+    public void mostrarExito(String text) {
+        JOptionPane.showMessageDialog(null, text, "¡Exito!",JOptionPane.INFORMATION_MESSAGE);
+        if(text.contains("guardados")){
+            new_celular.setSelected(false);
+            marca_celular.setEnabled(false);
+            modelo_celular.setEnabled(false);
+            presupuestoController.recuperarCelulares(idCliente);
+        }
+        if(text.contains("cliente")){
+            presupuestoController.buscarCliente("");
+        }
+        if(text.contains("presupuesto")){
+        DefaultTableModel model = (DefaultTableModel) tabla_repuestosPresu.getModel();
+        model.setRowCount(0);
+        model = (DefaultTableModel) tabla_tareasPresu.getModel();
+        model.setRowCount(0);
+        limpiarCamposEquipo();
+        }
+    }
+    public void limpiarCamposEquipo(){
+            marca_celular.setText("");
+            motivo_celular.setText("");
+            detalles_celular.setText("");
+            modelo_celular.setText("");
+            equipos_Asociados.removeAllItems();
+            agregar_repuesto_presu.setEnabled(false);
+            agregar_tarea_presu.setEnabled(false);
+    }
+
+    @Override
+    public void mostrarEquipos(HashMap<String,Equipo> list) {
+        equiposAsociados = list;
+        if(list.size() == 0)
+            limpiarCamposEquipo();
+        try{
+            equipos_Asociados.removeAllItems();
+            equipos_Asociados.setEnabled(true);
+            for(String name : equiposAsociados.keySet()){
+                equipos_Asociados.addItem(name);
+            }
+            equipos_Asociados.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    if (e.getStateChange() == ItemEvent.SELECTED) {
+                        cargarPredef(e.getItem().toString());
+                    }
+                }
+            });
+        }catch(NullPointerException e){
+            equipos_Asociados.setEnabled(false);
+        }
+    }
+    
+    public void cargarPredef(String nombre){
+        System.out.println("nombre equipo: "+nombre);
+        Equipo e = equiposAsociados.get(nombre);
+        idEquipo = e.getId();
+        try{
+            marca_celular.setText(e.getMarca());
+            motivo_celular.setText(e.getMotivoFalla());
+            detalles_celular.setText(e.getDetallesIngreso());
+            modelo_celular.setText(e.getModelo());
+        }catch(NullPointerException ex){
+            System.out.println("cargar celu asociado fallo");
+        }
+    }
+    @Override
+    public void agregarTarea(String nombre, int garantia, float valorServicio){
+        DefaultTableModel model = (DefaultTableModel) tabla_tareasPresu.getModel();
+        Object[] nuevoRepuesto = {nombre,garantia,valorServicio};
+        model.addRow(nuevoRepuesto);
+        float total = Float.parseFloat(total_presu.getText());
+        total += valorServicio;
+        total_presu.setText(Funciones.redondeo2String(total));
+    }
+
+    @Override
+    public void mostrarRepuestos(List<Producto> list) {
+        DefaultTableModel model = (DefaultTableModel) tabla_buscadorRepuestos.getModel();
+        model.setRowCount(0);
+        for(Producto  p: list){
+            Object[] nuevoProducto = {p.getNombre(),p.getGarantia(),p.getStock(),p.getPrecio()};
+            model.addRow(nuevoProducto);
+        }
+    }
+    
+    @Override
+    public void mostrarPredef(List<Tarea> list) {
+        DefaultTableModel model = (DefaultTableModel) tabla_buscadorTareas.getModel();
+        model.setRowCount(0);
+        for(Tarea  p: list){
+            Object[] nuevoProducto = {p.getNombre(),p.getGarantia(),p.getValorServicio()};
+            model.addRow(nuevoProducto);
+        }
+    }
+    
+//-------------------------------------------------------------------------------
+
+    
+
 }
